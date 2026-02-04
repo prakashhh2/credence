@@ -1,25 +1,22 @@
 import "./App.css";
+import logo from "./assets/transparent-logo.png";
 
 function App() {
   return (
     <div className="App">
       <header className="App-header">
-        {/* Logo */}
         <img
-          
+          src={logo}
           className="App-logo"
           alt="Credence logo"
         />
 
-        {/* Title */}
         <h1>Credence</h1>
 
-        {/* Tagline */}
         <p className="subtitle">
           Blockchain-powered academic certificate verification.
         </p>
 
-        {/* Actions */}
         <div className="button-group">
           <button className="primary-btn">Student Portal</button>
           <button className="secondary-btn">University Portal</button>
