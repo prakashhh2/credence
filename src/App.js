@@ -12,8 +12,9 @@
  */
 
 import "./App.css";
-import Navbar from "./components/layout/Navbar";
+import Navbar from "./components/layout/Navbar.jsx";
 import logo from "./assets/transparent-logo.png";
+import Footer from "./components/layout/Footer.jsx";
 
 function App() {
   return (
@@ -57,6 +58,9 @@ function App() {
           </button>
         </div>
       </header>
+
+      {/* Footer */}
+      <Footer />
     </div>
   );
 }

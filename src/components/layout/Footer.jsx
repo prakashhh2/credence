@@ -21,12 +21,12 @@ const Footer = () => {
           <h3>About Credence</h3>
           <p>
             Credence is built on trust, transparency, and clean systems.
-            We design tech that actually works — no noise, no shortcuts,
-            just truth written in code.
+            We design tech that works — no noise, no shortcuts, just
+            secure and verifiable credentials.
           </p>
         </div>
 
-        {/* LINKS */}
+        {/* EXPLORE LINKS */}
         <div className="footer-section">
           <h3>Explore</h3>
           <ul>
@@ -37,14 +37,43 @@ const Footer = () => {
           </ul>
         </div>
 
-        {/* SOCIAL */}
+        {/* CONNECT / SOCIAL */}
         <div className="footer-section">
           <h3>Connect</h3>
           <ul>
             <li><a href="#">GitHub</a></li>
             <li><a href="#">LinkedIn</a></li>
             <li><a href="#">X (Twitter)</a></li>
+            <li><a href="#">Discord</a></li>
           </ul>
+        </div>
+
+        {/* NEWSLETTER */}
+        <div className="footer-section">
+          <h3>Stay Updated</h3>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              alert("Subscribed!");
+            }}
+            className="footer-newsletter"
+          >
+            <input
+              type="email"
+              placeholder="Your email"
+              required
+              className="footer-input"
+            />
+            <button type="submit" className="footer-btn">Subscribe</button>
+          </form>
+        </div>
+
+        {/* CONTACT INFO */}
+        <div className="footer-section">
+          <h3>Contact</h3>
+          <p>Email: <a href="mailto:support@credence.com">support@credence.com</a></p>
+          <p>Phone: +1 234 567 890</p>
+          <p>Address: 123 Tech Street, Silicon Valley</p>
         </div>
 
         {/* THEME TOGGLE */}
@@ -57,8 +86,14 @@ const Footer = () => {
 
       </div>
 
+      {/* FOOTER BOTTOM */}
       <div className="footer-bottom">
-        © {new Date().getFullYear()} Credence. Built with intent.
+        <p>© {new Date().getFullYear()} Credence. Built with intent.</p>
+        <ul className="footer-legal">
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/terms">Terms of Service</a></li>
+          <li><a href="/cookies">Cookie Policy</a></li>
+        </ul>
       </div>
     </footer>
   );
