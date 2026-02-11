@@ -8,7 +8,6 @@
  * - Triggers full page reloads
  * - Suitable for static or multi-page setups
  */
-
 import React from "react";
 import "./Navbar.css";
 import logo from "../../assets/ChatGPT Image Feb 4, 2026, 02_25_21 PM.png";
@@ -25,6 +24,7 @@ function Navbar() {
         />
         <span className="nav-title">Credence</span>
       </div>
+      
 
       {/* Right section: Navigation */}
       <div className="nav-right">

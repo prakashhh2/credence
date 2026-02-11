@@ -117,3 +117,55 @@ button {
   border-color: #1e88e5;
   color: #1e88e5;
 }
+/* WALLET BUTTON POSITION */
+.wallet-wrapper {
+  position: absolute;
+  top: 80px; /* just below navbar */
+  right: 3rem;
+  z-index: 50;
+}
+
+/* BUTTON BASE */
+.wallet-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+
+  padding: 0.6rem 1.4rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+
+  color: #ffffff;
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+
+  border: 1px solid rgba(59, 130, 246, 0.6);
+  border-radius: 999px;
+
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+/* HOVER */
+.wallet-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.35);
+}
+
+/* CONNECTED STATE */
+.wallet-btn.connected {
+  background: linear-gradient(135deg, #1d4ed8, #2563eb);
+}
+
+/* ADDRESS TEXT */
+.wallet-address {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.8rem;
+}
+
+/* STATUS DOT */
+.wallet-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #22c55e;
+}
