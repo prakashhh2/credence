@@ -7,7 +7,9 @@
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^13.5.0",
+    "dotenv": "^17.2.4",
     "ethers": "^6.16.0",
+    "qrcode": "^1.5.4",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "react-scripts": "5.0.1",
@@ -17,7 +19,12 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "hardhat:compile": "npx hardhat compile",
+    "hardhat:deploy": "npx hardhat run scripts/deploy.js --network sepolia",
+    "hardhat:node": "npx hardhat node",
+    "indexer:start": "node scripts/indexer.js",
+    "backend:start": "node backend/app.js"
   },
   "eslintConfig": {
     "extends": [

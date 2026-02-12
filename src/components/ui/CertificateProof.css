@@ -1,0 +1,186 @@
+.certificate-proof {
+  background: white;
+  border-radius: 8px;
+  padding: 2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.certificate-proof.empty {
+  text-align: center;
+  color: #999;
+  padding: 3rem 2rem;
+}
+
+.proof-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #f0f0f0;
+  padding-bottom: 1rem;
+}
+
+.proof-header h2 {
+  margin: 0;
+  color: #333;
+}
+
+.success-badge {
+  background-color: #d4edda;
+  color: #155724;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.proof-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.proof-section h3 {
+  margin: 0 0 1rem 0;
+  color: #333;
+  font-size: 1.1rem;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.info-item {
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+  border-left: 3px solid #007bff;
+}
+
+.info-item label {
+  display: block;
+  font-weight: 600;
+  color: #555;
+  margin-bottom: 0.25rem;
+  font-size: 0.9rem;
+}
+
+.info-item p {
+  margin: 0;
+  color: #333;
+  word-break: break-word;
+}
+
+.hash-container {
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+}
+
+.hash-container label {
+  display: block;
+  font-weight: 600;
+  color: #555;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.hash-box {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 0.5rem;
+  position: relative;
+}
+
+.hash-box code {
+  flex: 1;
+  font-family: 'Courier New', monospace;
+  font-size: 0.85rem;
+  word-break: break-all;
+  color: #333;
+  padding: 0.5rem;
+  overflow-x: auto;
+}
+
+.btn-copy {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  transition: transform 0.2s;
+}
+
+.btn-copy:hover {
+  transform: scale(1.2);
+}
+
+.qr-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+}
+
+.qr-code {
+  width: 200px;
+  height: 200px;
+  border: 2px solid #ddd;
+  padding: 0.5rem;
+  background: white;
+}
+
+.qr-hint {
+  font-size: 0.9rem;
+  color: #666;
+  text-align: center;
+  margin: 0;
+}
+
+.proof-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn-download,
+.btn-share {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-download {
+  background-color: #28a745;
+  color: white;
+}
+
+.btn-download:hover {
+  background-color: #218838;
+}
+
+.btn-share {
+  background-color: #007bff;
+  color: white;
+}
+
+.btn-share:hover {
+  background-color: #0056b3;
+}

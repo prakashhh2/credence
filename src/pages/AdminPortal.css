@@ -1,0 +1,170 @@
+/**
+ * Admin Portal – Premium Styling
+ * Uses theme CSS variables from theme.css
+ */
+
+.admin-portal {
+  background: var(--color-bg-secondary);
+  min-height: calc(100vh - 64px);
+  padding: 2rem 1rem;
+}
+
+.admin-portal h1 {
+  background: var(--grad-primary);
+  color: white;
+  text-align: center;
+  margin: 0 0 2rem 0;
+  font-size: 2.2rem;
+  font-weight: 700;
+  padding: 2rem;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  letter-spacing: -0.5px;
+}
+
+.admin-portal > div:nth-child(2) {
+  max-width: 700px;
+  margin: 0 auto 2rem auto;
+  background: var(--color-bg-primary);
+  border: 1px solid var(--color-border);
+  padding: 2rem;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+}
+
+.admin-portal > div:nth-child(2) div {
+  color: var(--color-text-secondary);
+  font-weight: 500;
+  line-height: 1.6;
+}
+
+.admin-form {
+  max-width: 700px;
+  margin: 0 auto 2rem auto;
+  background: var(--color-bg-primary);
+  border: 1px solid var(--color-border);
+  padding: 2.5rem;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  display: grid;
+  gap: 1.5rem;
+}
+
+.admin-form label {
+  display: block;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.admin-form input[type="text"],
+.admin-form input[type="email"],
+.admin-form input {
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  width: 100%;
+  box-sizing: border-box;
+  color: var(--color-text-primary);
+  background: var(--color-bg-secondary);
+  font-family: "JetBrains Mono", monospace;
+  transition: all var(--transition-base);
+}
+
+.admin-form input[type="text"]:focus,
+.admin-form input[type="email"]:focus,
+.admin-form input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
+}
+
+[data-theme="dark"] .admin-form input[type="text"]:focus,
+[data-theme="dark"] .admin-form input[type="email"]:focus,
+[data-theme="dark"] .admin-form input:focus {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.admin-form button {
+  background: var(--grad-primary);
+  color: white;
+  padding: 0.875rem 2rem;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all var(--transition-base);
+  box-shadow: var(--shadow-md);
+  width: 100%;
+}
+
+.admin-form button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.admin-form button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.admin-form button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.status {
+  max-width: 700px;
+  margin: 0 auto 2rem auto;
+  background: var(--color-bg-primary);
+  border: 1px solid var(--color-border);
+  padding: 1.5rem;
+  border-radius: var(--radius-md);
+  color: var(--color-text-secondary);
+  text-align: center;
+  font-weight: 500;
+  box-shadow: var(--shadow-md);
+  line-height: 1.6;
+}
+
+.qr {
+  max-width: 700px;
+  margin: 0 auto;
+  background: var(--color-bg-primary);
+  border: 1px solid var(--color-border);
+  padding: 2rem;
+  border-radius: var(--radius-md);
+  text-align: center;
+  box-shadow: var(--shadow-md);
+}
+
+.qr h3 {
+  margin: 0 0 1.5rem 0;
+  font-size: 1.3rem;
+  color: var(--color-text-primary);
+  font-weight: 700;
+}
+
+.qr img {
+  max-width: 300px;
+  height: auto;
+  border-radius: var(--radius-md);
+  border: 2px solid var(--color-border);
+  padding: 1rem;
+  background: var(--color-bg-secondary);
+}
+
+@media (max-width: 768px) {
+  .admin-portal h1 {
+    font-size: 1.8rem;
+    padding: 1.5rem;
+  }
+
+  .admin-form,
+  .admin-portal > div:nth-child(2),
+  .status,
+  .qr {
+    padding: 1.5rem;
+  }
+}

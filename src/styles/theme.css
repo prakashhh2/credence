@@ -1,0 +1,714 @@
+/**
+ * Credence Design System – Premium Color & Component Tokens
+ * Production-ready CSS theme with light/dark mode support
+ * Usage: Apply [data-theme="dark"] to <html> or <body>
+ */
+
+/* ====================================================================
+   LIGHT THEME (Default)
+   ==================================================================== */
+
+:root {
+  /* ─────────────────────────────────────────────────────────────────
+     Color Tokens – Light Theme
+     ───────────────────────────────────────────────────────────────── */
+
+  /* Background & Surface */
+  --color-bg-primary: #ffffff;
+  --color-bg-secondary: #f8fafc;
+  --color-surface: #f1f5f9;
+  --color-surface-elevated: #e2e8f0;
+
+  /* Text */
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #334155;
+  --color-text-muted: #64748b;
+  --color-text-light: #cbd5e1;
+
+  /* Semantic Colors */
+  --color-border: #e2e8f0;
+  --color-border-light: #f1f5f9;
+  --color-border-strong: #cbd5e1;
+
+  /* Primary Brand */
+  --color-primary: #1e40af;
+  --color-primary-light: #3b82f6;
+  --color-primary-lighter: #dbeafe;
+  --color-primary-dark: #1e3a8a;
+
+  /* Secondary */
+  --color-secondary: #7c3aed;
+  --color-secondary-light: #a78bfa;
+  --color-secondary-lighter: #ede9fe;
+  --color-secondary-dark: #6d28d9;
+
+  /* Success */
+  --color-success: #16a34a;
+  --color-success-light: #22c55e;
+  --color-success-lighter: #dcfce7;
+  --color-success-dark: #15803d;
+
+  /* Warning */
+  --color-warning: #d97706;
+  --color-warning-light: #fbbf24;
+  --color-warning-lighter: #fef3c7;
+  --color-warning-dark: #b45309;
+
+  /* Danger */
+  --color-danger: #dc2626;
+  --color-danger-light: #ef4444;
+  --color-danger-lighter: #fee2e2;
+  --color-danger-dark: #b91c1c;
+
+  /* ─────────────────────────────────────────────────────────────────
+     Gradient Tokens – Light Theme
+     ───────────────────────────────────────────────────────────────── */
+
+  --grad-primary: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+  --grad-secondary: linear-gradient(135deg, #7c3aed 0%, #a78bfa 100%);
+  --grad-surface: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  --grad-accent: linear-gradient(135deg, #1e40af 0%, #7c3aed 100%);
+
+  /* ─────────────────────────────────────────────────────────────────
+     Glass Effect Tokens – Light Theme
+     ───────────────────────────────────────────────────────────────── */
+
+  --glass-bg: rgba(255, 255, 255, 0.8);
+  --glass-bg-hover: rgba(255, 255, 255, 0.9);
+  --glass-bg-strong: rgba(255, 255, 255, 0.95);
+  --glass-border: rgba(15, 23, 42, 0.08);
+  --glass-blur: 12px;
+
+  /* ─────────────────────────────────────────────────────────────────
+     Shadow Tokens
+     ───────────────────────────────────────────────────────────────── */
+
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05);
+  --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
+  --shadow-lg: 0 12px 24px rgba(15, 23, 42, 0.12);
+  --shadow-xl: 0 20px 40px rgba(15, 23, 42, 0.16);
+
+  /* ─────────────────────────────────────────────────────────────────
+     Spacing & Radius
+     ───────────────────────────────────────────────────────────────── */
+
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+
+  /* ─────────────────────────────────────────────────────────────────
+     Transitions
+     ───────────────────────────────────────────────────────────────── */
+
+  --transition-fast: 150ms ease-in-out;
+  --transition-base: 250ms ease-in-out;
+  --transition-slow: 350ms ease-in-out;
+}
+
+/* ====================================================================
+   DARK THEME
+   ==================================================================== */
+
+[data-theme="dark"] {
+  /* ─────────────────────────────────────────────────────────────────
+     Color Tokens – Dark Theme
+     ───────────────────────────────────────────────────────────────── */
+
+  /* Background & Surface */
+  --color-bg-primary: #0f172a;
+  --color-bg-secondary: #1e293b;
+  --color-surface: #334155;
+  --color-surface-elevated: #475569;
+
+  /* Text */
+  --color-text-primary: #f1f5f9;
+  --color-text-secondary: #cbd5e1;
+  --color-text-muted: #94a3b8;
+  --color-text-light: #64748b;
+
+  /* Semantic Colors */
+  --color-border: #475569;
+  --color-border-light: #334155;
+  --color-border-strong: #64748b;
+
+  /* Primary Brand */
+  --color-primary: #3b82f6;
+  --color-primary-light: #60a5fa;
+  --color-primary-lighter: #1e3a8a;
+  --color-primary-dark: #1e40af;
+
+  /* Secondary */
+  --color-secondary: #a78bfa;
+  --color-secondary-light: #c4b5fd;
+  --color-secondary-lighter: #4c1d95;
+  --color-secondary-dark: #7c3aed;
+
+  /* Success */
+  --color-success: #22c55e;
+  --color-success-light: #4ade80;
+  --color-success-lighter: #15803d;
+  --color-success-dark: #16a34a;
+
+  /* Warning */
+  --color-warning: #fbbf24;
+  --color-warning-light: #fcd34d;
+  --color-warning-lighter: #78350f;
+  --color-warning-dark: #d97706;
+
+  /* Danger */
+  --color-danger: #ef4444;
+  --color-danger-light: #f87171;
+  --color-danger-lighter: #7f1d1d;
+  --color-danger-dark: #dc2626;
+
+  /* ─────────────────────────────────────────────────────────────────
+     Gradient Tokens – Dark Theme
+     ───────────────────────────────────────────────────────────────── */
+
+  --grad-primary: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+  --grad-secondary: linear-gradient(135deg, #6d28d9 0%, #a78bfa 100%);
+  --grad-surface: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  --grad-accent: linear-gradient(135deg, #3b82f6 0%, #a78bfa 100%);
+
+  /* ─────────────────────────────────────────────────────────────────
+     Glass Effect Tokens – Dark Theme
+     ───────────────────────────────────────────────────────────────── */
+
+  --glass-bg: rgba(15, 23, 42, 0.7);
+  --glass-bg-hover: rgba(30, 41, 59, 0.8);
+  --glass-bg-strong: rgba(51, 65, 85, 0.9);
+  --glass-border: rgba(148, 163, 184, 0.12);
+  --glass-blur: 12px;
+
+  /* ─────────────────────────────────────────────────────────────────
+     Shadow Tokens (Dark)
+     ───────────────────────────────────────────────────────────────── */
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 12px 24px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.6);
+}
+
+/* ====================================================================
+   COMPONENT STYLES – BUTTONS
+   ==================================================================== */
+
+.btn {
+  /* Base button styles */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.5;
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  text-decoration: none;
+  user-select: none;
+  white-space: nowrap;
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   Button: Primary
+   ───────────────────────────────────────────────────────────────── */
+
+.btn-primary {
+  background: var(--grad-primary);
+  color: #ffffff;
+  border-color: transparent;
+  box-shadow: var(--shadow-md);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-primary:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   Button: Secondary
+   ───────────────────────────────────────────────────────────────── */
+
+.btn-secondary {
+  background: var(--grad-secondary);
+  color: #ffffff;
+  border-color: transparent;
+  box-shadow: var(--shadow-md);
+}
+
+.btn-secondary:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.btn-secondary:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-secondary:focus-visible {
+  outline: 2px solid var(--color-secondary);
+  outline-offset: 2px;
+}
+
+.btn-secondary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   Button: Ghost (Outline)
+   ───────────────────────────────────────────────────────────────── */
+
+.btn-ghost {
+  background: transparent;
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+  box-shadow: none;
+}
+
+.btn-ghost:hover {
+  background: var(--color-primary-lighter);
+  transform: none;
+}
+
+[data-theme="dark"] .btn-ghost:hover {
+  background: rgba(59, 130, 246, 0.1);
+}
+
+.btn-ghost:active {
+  background: var(--color-primary-lighter);
+}
+
+[data-theme="dark"] .btn-ghost:active {
+  background: rgba(59, 130, 246, 0.15);
+}
+
+.btn-ghost:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.btn-ghost:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   Button: Danger
+   ───────────────────────────────────────────────────────────────── */
+
+.btn-danger {
+  background: var(--color-danger);
+  color: #ffffff;
+  border-color: transparent;
+  box-shadow: var(--shadow-md);
+}
+
+.btn-danger:hover {
+  background: var(--color-danger-light);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.btn-danger:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-danger:focus-visible {
+  outline: 2px solid var(--color-danger);
+  outline-offset: 2px;
+}
+
+.btn-danger:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   Button: Success
+   ───────────────────────────────────────────────────────────────── */
+
+.btn-success {
+  background: var(--color-success);
+  color: #ffffff;
+  border-color: transparent;
+  box-shadow: var(--shadow-md);
+}
+
+.btn-success:hover {
+  background: var(--color-success-light);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.btn-success:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-success:focus-visible {
+  outline: 2px solid var(--color-success);
+  outline-offset: 2px;
+}
+
+.btn-success:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   Button: Small
+   ───────────────────────────────────────────────────────────────── */
+
+.btn-sm {
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   Button: Large
+   ───────────────────────────────────────────────────────────────── */
+
+.btn-lg {
+  padding: 1rem 2rem;
+  font-size: 1.05rem;
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   Button: Full Width
+   ───────────────────────────────────────────────────────────────── */
+
+.btn-full {
+  width: 100%;
+}
+
+/* ====================================================================
+   COMPONENT STYLES – CARDS
+   ==================================================================== */
+
+.card {
+  background: var(--color-bg-primary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 2rem;
+  box-shadow: var(--shadow-md);
+  transition: all var(--transition-base);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Gradient top highlight */
+.card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--grad-primary);
+  opacity: 0.6;
+}
+
+.card:hover {
+  border-color: var(--color-border-strong);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+.card-secondary::before {
+  background: var(--grad-secondary);
+}
+
+.card-success::before {
+  background: linear-gradient(90deg, var(--color-success), var(--color-success-light));
+}
+
+.card-warning::before {
+  background: linear-gradient(90deg, var(--color-warning), var(--color-warning-light));
+}
+
+.card-danger::before {
+  background: linear-gradient(90deg, var(--color-danger), var(--color-danger-light));
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   Card: Elevated
+   ───────────────────────────────────────────────────────────────── */
+
+.card-elevated {
+  background: var(--color-bg-secondary);
+  border-color: var(--color-border-light);
+  box-shadow: var(--shadow-lg);
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   Card: Glass (Glassmorphism)
+   ───────────────────────────────────────────────────────────────── */
+
+.card-glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-md);
+}
+
+.card-glass:hover {
+  background: var(--glass-bg-hover);
+  border-color: rgba(30, 64, 175, 0.2);
+}
+
+[data-theme="dark"] .card-glass:hover {
+  border-color: rgba(59, 130, 246, 0.2);
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   Card Content Structure
+   ───────────────────────────────────────────────────────────────── */
+
+.card-header {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.card-header h2,
+.card-header h3 {
+  margin: 0;
+  color: var(--color-text-primary);
+}
+
+.card-body {
+  margin-bottom: 1.5rem;
+}
+
+.card-body p {
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  margin: 0 0 1rem 0;
+}
+
+.card-footer {
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+}
+
+/* ====================================================================
+   UTILITY CLASSES
+   ==================================================================== */
+
+/* Text Colors */
+.text-primary {
+  color: var(--color-text-primary);
+}
+
+.text-secondary {
+  color: var(--color-text-secondary);
+}
+
+.text-muted {
+  color: var(--color-text-muted);
+}
+
+.text-light {
+  color: var(--color-text-light);
+}
+
+.text-success {
+  color: var(--color-success);
+}
+
+.text-warning {
+  color: var(--color-warning);
+}
+
+.text-danger {
+  color: var(--color-danger);
+}
+
+/* Background Colors */
+.bg-primary {
+  background-color: var(--color-primary);
+  color: #ffffff;
+}
+
+.bg-secondary {
+  background-color: var(--color-secondary);
+  color: #ffffff;
+}
+
+.bg-surface {
+  background-color: var(--color-surface);
+}
+
+.bg-success {
+  background-color: var(--color-success);
+  color: #ffffff;
+}
+
+.bg-warning {
+  background-color: var(--color-warning);
+  color: #ffffff;
+}
+
+.bg-danger {
+  background-color: var(--color-danger);
+  color: #ffffff;
+}
+
+/* Gradient Backgrounds */
+.grad-primary {
+  background: var(--grad-primary);
+  color: #ffffff;
+}
+
+.grad-secondary {
+  background: var(--grad-secondary);
+  color: #ffffff;
+}
+
+.grad-accent {
+  background: var(--grad-accent);
+  color: #ffffff;
+}
+
+/* Borders */
+.border-primary {
+  border-color: var(--color-primary);
+}
+
+.border-secondary {
+  border-color: var(--color-secondary);
+}
+
+.border-danger {
+  border-color: var(--color-danger);
+}
+
+.border-success {
+  border-color: var(--color-success);
+}
+
+/* Shadows */
+.shadow-sm {
+  box-shadow: var(--shadow-sm);
+}
+
+.shadow-md {
+  box-shadow: var(--shadow-md);
+}
+
+.shadow-lg {
+  box-shadow: var(--shadow-lg);
+}
+
+.shadow-xl {
+  box-shadow: var(--shadow-xl);
+}
+
+/* Rounded Corners */
+.rounded-sm {
+  border-radius: var(--radius-sm);
+}
+
+.rounded-md {
+  border-radius: var(--radius-md);
+}
+
+.rounded-lg {
+  border-radius: var(--radius-lg);
+}
+
+.rounded-xl {
+  border-radius: var(--radius-xl);
+}
+
+/* ====================================================================
+   ACCESSIBILITY & RESPONSIVE
+   ==================================================================== */
+
+/* Focus Visible Style (applies to all interactive elements) */
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+[data-theme="dark"] :focus-visible {
+  outline-color: var(--color-primary-light);
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .btn {
+    padding: 0.65rem 1.25rem;
+    font-size: 0.9rem;
+  }
+
+  .btn-sm {
+    padding: 0.45rem 0.9rem;
+    font-size: 0.8rem;
+  }
+
+  .btn-lg {
+    padding: 0.85rem 1.75rem;
+    font-size: 1rem;
+  }
+
+  .card {
+    padding: 1.5rem;
+  }
+
+  .card-footer {
+    flex-direction: column-reverse;
+  }
+
+  .card-footer .btn {
+    width: 100%;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .btn,
+  .card {
+    box-shadow: none;
+    border: 1px solid #999;
+  }
+}

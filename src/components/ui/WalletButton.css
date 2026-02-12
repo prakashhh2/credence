@@ -1,32 +1,35 @@
 /* src/components/ui/WalletButton.css */
 
-/* Container alignment (optional if inside navbar) */
+/* Wrapper */
 .wallet-wrapper {
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-/* Button base */
+/* ============================= */
+/* BUTTON BASE                   */
+/* ============================= */
+
 .wallet-btn {
   position: relative;
   display: inline-flex;
   align-items: center;
   gap: 0.6rem;
 
-  padding: 0.55rem 1.25rem;
+  padding: 0.6rem 1.3rem;
   font-size: 0.85rem;
   font-weight: 500;
   letter-spacing: 0.3px;
 
   color: var(--text);
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--wallet-bg);
 
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  border: 1px solid var(--wallet-border);
   border-radius: 999px;
 
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 
   cursor: pointer;
   transition: all 0.25s ease;
@@ -34,33 +37,57 @@
 
 /* Hover */
 .wallet-btn:hover {
-  background: rgba(255, 255, 255, 0.14);
-  transform: translateY(-1px);
+  background: var(--wallet-bg-hover);
+  transform: translateY(-2px);
 }
 
-/* Active click */
+/* Click */
 .wallet-btn:active {
-  transform: translateY(0);
+  transform: scale(0.97);
 }
 
-/* Connected state */
+/* ============================= */
+/* CONNECTED STATE               */
+/* ============================= */
+
 .wallet-btn.connected {
-  border-color: rgba(96, 165, 250, 0.5);
-  background: rgba(96, 165, 250, 0.12);
+  background: var(--wallet-connected-bg);
+  border-color: var(--wallet-connected-border);
 }
 
-/* Address text */
+/* ============================= */
+/* ADDRESS STYLE                 */
+/* ============================= */
+
 .wallet-address {
   font-family: "JetBrains Mono", monospace;
   font-size: 0.8rem;
   opacity: 0.95;
 }
 
-/* Status dot */
+/* ============================= */
+/* STATUS DOT                    */
+/* ============================= */
+
 .wallet-dot {
   width: 7px;
   height: 7px;
   border-radius: 50%;
   background: #22c55e;
-  box-shadow: 0 0 6px rgba(34, 197, 94, 0.8);
+  box-shadow: 0 0 8px rgba(34, 197, 94, 0.9);
+}
+
+/* ============================= */
+/* BACKDROP FALLBACK             */
+/* ============================= */
+
+@supports not ((backdrop-filter: blur(16px)) or (-webkit-backdrop-filter: blur(16px))) {
+  .wallet-btn {
+    backdrop-filter: none;
+    background: rgba(0, 0, 0, 0.08);
+  }
+
+  body.light .wallet-btn {
+    background: rgba(15, 23, 42, 0.08);
+  }
 }

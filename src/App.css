@@ -1,14 +1,12 @@
 /**
  * Credence UI – Global App Styles
- * ------------------------------
- * Design goals:
- * - Minimal
- * - Trustworthy
- * - Modern SaaS aesthetic
- * - Accessibility-friendly
+ * Modern, Clean & Trustworthy Design System
  */
 
-/* Root wrapper */
+/* ════════════════════════════════════════════════════════
+   Root & Layout
+   ════════════════════════════════════════════════════════ */
+
 .app {
   font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont;
   background-color: #f8fafc;
@@ -16,9 +14,15 @@
   min-height: 100vh;
 }
 
-/* =========================
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+/* ════════════════════════════════════════════════════════
    Hero Section
-   ========================= */
+   ════════════════════════════════════════════════════════ */
 
 .hero {
   min-height: calc(100vh - 64px);
@@ -27,43 +31,46 @@
   justify-content: center;
   align-items: center;
   text-align: center;
-
-  padding: 2rem;
-
-  /* Subtle premium background */
-  background:
-    radial-gradient(
-      circle at top,
+  padding: 3rem 2rem;
+  background: radial-gradient(
+      circle at 50% 0%,
       rgba(30, 136, 229, 0.12),
       transparent 60%
     ),
     #f8fafc;
+  position: relative;
+  overflow: hidden;
 }
 
-/* Brand logo */
+.hero-main {
+  position: relative;
+  z-index: 1;
+  max-width: 800px;
+}
+
 .hero-logo {
   width: 120px;
   margin-bottom: 1.5rem;
+  display: block;
 }
 
-/* Main headline */
 .hero-title {
   font-size: clamp(2.5rem, 5vw, 3.5rem);
   font-weight: 700;
   color: #0b1c3d;
   letter-spacing: -0.02em;
+  margin: 0 0 1rem 0;
+  line-height: 1.1;
 }
 
-/* Supporting text */
 .hero-subtitle {
   max-width: 640px;
   font-size: 1.1rem;
   line-height: 1.7;
   color: #64748b;
-  margin: 1rem 0 2.5rem;
+  margin: 0 auto 2.5rem;
 }
 
-/* CTA button container */
 .hero-actions {
   display: flex;
   gap: 1rem;
@@ -71,11 +78,11 @@
   justify-content: center;
 }
 
-/* =========================
+/* ════════════════════════════════════════════════════════
    Button System
-   ========================= */
+   ════════════════════════════════════════════════════════ */
 
-button {
+.btn {
   padding: 0.75rem 1.6rem;
   border-radius: 999px;
   font-size: 0.95rem;
@@ -83,9 +90,10 @@ button {
   cursor: pointer;
   transition: all 0.25s ease;
   border: none;
+  display: inline-block;
+  white-space: nowrap;
 }
 
-/* Primary action */
 .btn-primary {
   background: linear-gradient(135deg, #1e88e5, #0b1c3d);
   color: white;
@@ -96,17 +104,16 @@ button {
   box-shadow: 0 10px 25px rgba(30, 136, 229, 0.3);
 }
 
-/* Secondary action */
 .btn-secondary {
   background-color: #e8f1fd;
   color: #1e88e5;
 }
 
 .btn-secondary:hover {
-  background-color: #96b6e1;
+  background-color: #d4e4f7;
+  transform: translateY(-2px);
 }
 
-/* Neutral / verification action */
 .btn-outline {
   background: transparent;
   border: 1px solid #cbd5e1;
@@ -116,56 +123,481 @@ button {
 .btn-outline:hover {
   border-color: #1e88e5;
   color: #1e88e5;
+  background-color: rgba(30, 136, 229, 0.05);
 }
-/* WALLET BUTTON POSITION */
+
+/* ════════════════════════════════════════════════════════
+   Section Layout
+   ════════════════════════════════════════════════════════ */
+
+.section {
+  padding: 5rem 2rem;
+  background-color: #f8fafc;
+  position: relative;
+}
+
+.section:nth-child(even) {
+  background-color: #f0f5fb;
+}
+
+.section-title {
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin: 0 0 1rem 0;
+  color: #0b1c3d;
+  text-align: center;
+}
+
+.section-intro {
+  font-size: 1rem;
+  color: #64748b;
+  text-align: center;
+  margin: 0 auto 3rem;
+  max-width: 700px;
+  line-height: 1.7;
+}
+
+.how-it-works {
+  background: linear-gradient(180deg, #f0f5fb 0%, #e8f1fd 100%);
+}
+
+.about-project {
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+}
+
+.getting-started {
+  background: linear-gradient(180deg, #f8fafc 0%, #f0f5fb 100%);
+}
+
+/* ════════════════════════════════════════════════════════
+   Card Grid System
+   ════════════════════════════════════════════════════════ */
+
+.card-grid {
+  display: grid;
+  gap: 2rem;
+  margin-bottom: 0;
+}
+
+.card-grid-2 {
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+}
+
+.card-grid-3 {
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+}
+
+.card-grid-4 {
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+/* ════════════════════════════════════════════════════════
+   Info Cards
+   ════════════════════════════════════════════════════════ */
+
+.info-card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.info-card:hover {
+  border-color: #1e88e5;
+  box-shadow: 0 8px 24px rgba(30, 136, 229, 0.15);
+  transform: translateY(-4px);
+}
+
+.card-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 45px;
+  height: 45px;
+  background: linear-gradient(135deg, #1e88e5, #1565c0);
+  color: white;
+  border-radius: 50%;
+  font-weight: 700;
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+}
+
+.info-card h3 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0 0 1rem 0;
+  color: #0b1c3d;
+}
+
+.card-content {
+  color: #64748b;
+  line-height: 1.7;
+  font-size: 0.95rem;
+}
+
+.info-card-minimal {
+  background: transparent;
+  border: none;
+  padding: 1.5rem 0;
+  box-shadow: none;
+}
+
+.info-card-minimal:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.info-card-minimal h3 {
+  font-size: 1.05rem;
+  margin-bottom: 0.75rem;
+  color: #1e88e5;
+}
+
+.info-card-cta {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 100%;
+}
+
+.card-action {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.info-card-cta .card-action {
+  margin-top: auto;
+}
+
+/* ════════════════════════════════════════════════════════
+   About Project Section - Perfect UI Structure
+   ════════════════════════════════════════════════════════ */
+
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: start;
+}
+
+.about-column {
+  padding: 2rem;
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.about-column:hover {
+  border-color: #1e88e5;
+  box-shadow: 0 4px 12px rgba(30, 136, 229, 0.1);
+}
+
+.about-column h3 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin: 2rem 0 1rem 0;
+  color: #0b1c3d;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.about-column h3:first-child {
+  margin-top: 0;
+}
+
+.about-column h3::before {
+  content: "";
+  display: inline-block;
+  width: 4px;
+  height: 24px;
+  background: linear-gradient(180deg, #1e88e5, #1565c0);
+  border-radius: 2px;
+}
+
+.about-column p {
+  color: #64748b;
+  line-height: 1.8;
+  margin: 0 0 1.5rem 0;
+  font-size: 0.95rem;
+}
+
+.features-list,
+.tech-list,
+.user-roles {
+  list-style: none;
+  padding: 0;
+  margin: 1.5rem 0;
+}
+
+.features-list li,
+.tech-list li {
+  padding: 0.75rem 0 0.75rem 2rem;
+  color: #64748b;
+  position: relative;
+  line-height: 1.7;
+  font-size: 0.95rem;
+}
+
+.features-list li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: #22c55e;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.tech-list li::before {
+  content: "◆";
+  position: absolute;
+  left: 0;
+  color: #1e88e5;
+  font-size: 0.6rem;
+  top: 0.85rem;
+}
+
+.user-roles {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin: 2rem 0;
+}
+
+.user-roles .info-card-minimal {
+  padding: 1.25rem 1.5rem;
+  background: #f0f5fb;
+  border-radius: 8px;
+  border: 1px solid #d4e4f7;
+}
+
+.user-roles .info-card-minimal h3 {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  color: #0b1c3d;
+}
+
+.user-roles .info-card-minimal h3::before {
+  display: none;
+}
+
+.user-roles .card-content {
+  font-size: 0.9rem;
+}
+
+/* ════════════════════════════════════════════════════════
+   Wallet Button Styling
+   ════════════════════════════════════════════════════════ */
+
 .wallet-wrapper {
   position: absolute;
-  top: 80px; /* just below navbar */
+  top: 80px;
   right: 3rem;
   z-index: 50;
 }
 
-/* BUTTON BASE */
 .wallet-btn {
   display: inline-flex;
   align-items: center;
   gap: 0.6rem;
-
   padding: 0.6rem 1.4rem;
   font-size: 0.85rem;
   font-weight: 500;
-
   color: #ffffff;
   background: linear-gradient(135deg, #2563eb, #3b82f6);
-
   border: 1px solid rgba(59, 130, 246, 0.6);
   border-radius: 999px;
-
   cursor: pointer;
   transition: all 0.25s ease;
 }
 
-/* HOVER */
 .wallet-btn:hover {
   transform: translateY(-1px);
   box-shadow: 0 8px 24px rgba(37, 99, 235, 0.35);
 }
 
-/* CONNECTED STATE */
 .wallet-btn.connected {
   background: linear-gradient(135deg, #1d4ed8, #2563eb);
 }
 
-/* ADDRESS TEXT */
 .wallet-address {
   font-family: "JetBrains Mono", monospace;
   font-size: 0.8rem;
 }
 
-/* STATUS DOT */
 .wallet-dot {
   width: 7px;
   height: 7px;
   border-radius: 50%;
   background: #22c55e;
+}
+
+/* ════════════════════════════════════════════════════════
+   Responsive Design
+   ════════════════════════════════════════════════════════ */
+
+@media (max-width: 1024px) {
+  .hero-title {
+    font-size: 2.8rem;
+  }
+
+  .section-title {
+    font-size: 1.8rem;
+  }
+
+  .about-grid {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+
+  .about-column {
+    padding: 1.5rem;
+  }
+
+  .wallet-wrapper {
+    top: 60px;
+    right: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0 1.5rem;
+  }
+
+  .hero {
+    padding: 2rem 1.5rem;
+  }
+
+  .hero-title {
+    font-size: 2rem;
+  }
+
+  .hero-subtitle {
+    font-size: 0.95rem;
+  }
+
+  .hero-actions {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .btn {
+    width: 100%;
+    padding: 0.75rem 1.2rem;
+  }
+
+  .section {
+    padding: 3rem 1.5rem;
+  }
+
+  .section-title {
+    font-size: 1.5rem;
+  }
+
+  .section-intro {
+    font-size: 0.95rem;
+    margin-bottom: 2rem;
+  }
+
+  .card-grid-2,
+  .card-grid-3,
+  .card-grid-4 {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .info-card {
+    padding: 1.5rem;
+  }
+
+  .card-number {
+    width: 40px;
+    height: 40px;
+    font-size: 1rem;
+  }
+
+  .about-column {
+    padding: 1.25rem;
+    border-radius: 10px;
+  }
+
+  .about-column h3 {
+    font-size: 1.1rem;
+    margin: 1.5rem 0 0.75rem 0;
+  }
+
+  .about-column p {
+    font-size: 0.9rem;
+  }
+
+  .features-list li,
+  .tech-list li {
+    padding: 0.5rem 0 0.5rem 1.5rem;
+    font-size: 0.9rem;
+  }
+
+  .wallet-wrapper {
+    top: 50px;
+    right: 1rem;
+  }
+
+  .wallet-btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-logo {
+    width: 100px;
+  }
+
+  .hero-title {
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .section {
+    padding: 2rem 1rem;
+  }
+
+  .section-title {
+    font-size: 1.3rem;
+  }
+
+  .about-column {
+    padding: 1rem;
+  }
+
+  .about-column h3 {
+    font-size: 1rem;
+    margin: 1rem 0 0.5rem 0;
+  }
+
+  .wallet-wrapper {
+    position: static;
+    margin: 1rem 0;
+    width: 100%;
+  }
+
+  .wallet-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
