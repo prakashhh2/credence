@@ -1,238 +1,225 @@
-import React, { useEffect, useState } from 'react';
-import { getTransactionsForCertificate } from '../web3/transactionTracker';
+import React, { useState, useCallback } from 'react';
+import { useWallet } from '@solana/wallet-adapter-react';
+import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
+import { getCertificateDetails } from '../Services/solanaBlockchainServices';
+import { isValidSolanaAddress } from '../web3/solanaService';
 import './StudentPortal.css';
 
 const StudentPortal = () => {
-  const [studentAddress, setStudentAddress] = useState('');
-  const [certificateInput, setCertificateInput] = useState('');
-  const [claimedCerts, setClaimedCerts] = useState([]);
+  const { publicKey, connected } = useWallet();
+  
+  const [mintAddress, setMintAddress] = useState('');
+  const [certificate, setCertificate] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
 
-  useEffect(() => {
-    const address = localStorage.getItem('walletAddress');
-    if (address) {
-      setStudentAddress(address);
-    }
-  }, []);
+  const handleViewCertificate = useCallback(async (e) => {
+    e?.preventDefault?.();
 
-  // When student connects or on mount, load indexed certificates and filter by claimedBy
-  useEffect(() => {
-    const loadClaimed = async () => {
-      if (!studentAddress) return;
-      try {
-        setLoading(true);
-        const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:4001';
-        const res = await fetch(`${backendUrl}/indexed`);
-        const data = await res.json();
-        const items = data.issued || [];
-        const { getCertificateFromChain } = await import('../web3/web3Service');
-        const matched = [];
-        for (const it of items) {
-          try {
-            const cert = await getCertificateFromChain(it.certHash);
-            if (cert.claimedBy && cert.claimedBy.toLowerCase() === studentAddress.toLowerCase()) {
-              matched.push({
-                hash: it.certHash,
-                claimedAt: cert.claimedAt ? new Date(cert.claimedAt * 1000) : new Date(),
-                txHash: it.txHash,
-                issuer: cert.issuer,
-                ipfs: cert.ipfsHash,
-              });
-            }
-          } catch (err) {
-            // ignore individual cert errors
-            console.warn('error checking cert', it.certHash, err.message);
-          }
-        }
-        setClaimedCerts(matched);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadClaimed();
-  }, [studentAddress]);
-
-  const handleClaimCertificate = async (e) => {
-    e.preventDefault();
-    
-    if (!certificateInput.trim()) {
-      setError('Please enter a certificate hash');
+    if (!mintAddress.trim()) {
+      setError('❌ Please enter a mint address');
       return;
     }
 
-    if (!studentAddress) {
-      setError('Please connect your wallet first');
+    if (!isValidSolanaAddress(mintAddress)) {
+      setError('❌ Invalid Solana mint address');
       return;
     }
 
     setLoading(true);
     setError(null);
     setSuccess(null);
+    setCertificate(null);
 
     try {
-      // Import claimCertificateOnChain from web3Service
-      const { claimCertificateOnChain } = await import('../web3/web3Service');
-      
-      const result = await claimCertificateOnChain(certificateInput);
-      
-      // Add to claimed certificates
-      setClaimedCerts([
-        ...claimedCerts,
-        {
-          hash: certificateInput,
-          claimedAt: new Date(),
-          transactionHash: result.transactionHash,
-        },
-      ]);
-
-      setSuccess(`Certificate claimed successfully! Tx: ${result.transactionHash.slice(0, 10)}...`);
-      setCertificateInput('');
+      console.log('Fetching certificate details for:', mintAddress);
+      const certDetails = await getCertificateDetails(mintAddress);
+      setCertificate(certDetails);
+      setSuccess('✅ Certificate found!');
     } catch (err) {
-      setError(err.message || 'Failed to claim certificate');
+      console.error('Error fetching certificate:', err);
+      setError(`❌ ${err.message || 'Failed to fetch certificate'}`);
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleConnectWallet = async () => {
-    try {
-      const { connectWallet } = await import('../web3/web3Service');
-      const { address } = await connectWallet();
-      setStudentAddress(address);
-      localStorage.setItem('walletAddress', address);
-      setSuccess(`Wallet connected: ${address.slice(0, 6)}...${address.slice(-4)}`);
-    } catch (err) {
-      setError(err.message || 'Failed to connect wallet');
-    }
-  };
+  }, [mintAddress]);
 
   return (
     <div className="student-portal">
-      <div className="portal-container">
-        <div className="portal-header">
-          <h1>Student Certificate Portal</h1>
-          <p>Claim and manage your academic certificates</p>
-        </div>
+      <div className="student-header">
+        <h1>📜 Student Portal</h1>
+        <p>View your issued certificates minted on Solana Devnet</p>
+      </div>
 
-        {/* Wallet Connection */}
-        <div className="wallet-section">
-          <div className="wallet-info">
-            {studentAddress ? (
-              <div className="wallet-connected">
-                <span className="status-badge">✓ Connected</span>
-                <p className="wallet-address">
-                  {studentAddress.slice(0, 6)}...{studentAddress.slice(-4)}
-                </p>
+      <div className="wallet-section">
+        <div className="wallet-status">
+          {connected && publicKey ? (
+            <div className="wallet-connected">
+              <span className="wallet-indicator">🟢</span>
+              <div>
+                <div className="wallet-label">Connected Wallet</div>
+                <div className="wallet-address">{publicKey.toBase58().slice(0, 10)}...{publicKey.toBase58().slice(-4)}</div>
               </div>
-            ) : (
-              <p className="wallet-disconnected">Wallet not connected</p>
-            )}
-          </div>
-          {!studentAddress && (
-            <button className="btn-connect" onClick={handleConnectWallet}>
-              Connect MetaMask
-            </button>
+            </div>
+          ) : (
+            <div className="wallet-disconnected">
+              <span className="wallet-indicator">🔴</span>
+              <span>Wallet not connected</span>
+            </div>
           )}
         </div>
+        <WalletMultiButton className="wallet-button" />
+      </div>
 
-        {/* Messages */}
-        {error && <div className="error-message">{error}</div>}
-        {success && <div className="success-message">{success}</div>}
-
-        {/* Claim Certificate */}
-        <div className="claim-section">
-          <h2>Claim Your Certificate</h2>
-          <p className="section-hint">
-            Enter the certificate hash you received from your university
-          </p>
-
-          <form onSubmit={handleClaimCertificate} className="claim-form">
-            <div className="form-group">
-              <label htmlFor="certHash">Certificate Hash</label>
-              <input
-                type="text"
-                id="certHash"
-                value={certificateInput}
-                onChange={(e) => setCertificateInput(e.target.value)}
-                placeholder="0x... or certificate hash"
-                disabled={loading || !studentAddress}
-              />
-            </div>
-
-            <button 
-              type="submit" 
-              className="btn-claim"
-              disabled={loading || !studentAddress}
-            >
-              {loading ? 'Claiming...' : 'Claim Certificate'}
-            </button>
-          </form>
+      <form onSubmit={handleViewCertificate} className="search-form">
+        <div className="form-group">
+          <label htmlFor="mintAddressInput">Certificate Mint Address</label>
+          <input
+            id="mintAddressInput"
+            type="text"
+            value={mintAddress}
+            onChange={(e) => setMintAddress(e.target.value)}
+            placeholder="Enter the mint address of your certificate NFT..."
+            disabled={loading}
+          />
+          <p className="form-hint">Enter the Solana mint address of your certificate NFT</p>
         </div>
 
-        {/* Claimed Certificates */}
-        {claimedCerts.length > 0 && (
-          <div className="certificates-section">
-            <h2>Your Certificates ({claimedCerts.length})</h2>
-            <div className="certificates-grid">
-              {claimedCerts.map((cert, idx) => (
-                <div key={idx} className="certificate-card">
-                  <div className="cert-header">
-                    <span className="cert-badge">✓ Claimed</span>
-                    <span className="cert-date">
-                      {cert.claimedAt.toLocaleDateString()}
-                    </span>
-                  </div>
-                  
-                  <div className="cert-content">
-                    <p className="cert-hash">
-                      <strong>Hash:</strong><br/>
-                      <code>{cert.hash.slice(0, 32)}...</code>
-                    </p>
-                    <p className="cert-tx">
-                      <strong>Transaction:</strong><br/>
-                      <code>{cert.transactionHash.slice(0, 20)}...</code>
-                    </p>
-                  </div>
+        <button
+          type="submit"
+          disabled={loading || !mintAddress.trim()}
+          className={`btn-view ${loading ? 'loading' : ''}`}
+        >
+          {loading ? '⏳ Loading...' : '📖 View Certificate'}
+        </button>
+      </form>
 
-                  <div className="cert-actions">
-                    <a 
-                      href={`/verify/${cert.hash}`}
-                      className="btn-view"
-                    >
-                      View Details
-                    </a>
-                    <button 
-                      className="btn-copy"
-                      onClick={() => {
-                        navigator.clipboard.writeText(cert.hash);
-                        alert('Hash copied!');
-                      }}
-                    >
-                      Copy Hash
-                    </button>
+      {error && (
+        <div className="message error-message">
+          {error}
+        </div>
+      )}
+
+      {success && (
+        <div className="message success-message">
+          {success}
+        </div>
+      )}
+
+      {certificate && (
+        <div className="certificate-card">
+          <div className="cert-header">
+            <h2>🎓 Certificate Details</h2>
+            <span className="cert-status">On-Chain NFT</span>
+          </div>
+
+          {certificate.metadata && (
+            <>
+              {certificate.metadata.name && (
+                <div className="cert-detail">
+                  <div className="label">Certificate Name</div>
+                  <div className="value">{certificate.metadata.name}</div>
+                </div>
+              )}
+
+              {certificate.metadata.description && (
+                <div className="cert-detail">
+                  <div className="label">Description</div>
+                  <div className="value">{certificate.metadata.description}</div>
+                </div>
+              )}
+
+              {certificate.metadata.attributes && (
+                <div className="attributes-section">
+                  <h3>Certificate Attributes</h3>
+                  <div className="attributes-grid">
+                    {certificate.metadata.attributes.map((attr, idx) => (
+                      <div key={idx} className="attribute-item">
+                        <div className="attr-label">{attr.trait_type}</div>
+                        <div className="attr-value">{attr.value}</div>
+                      </div>
+                    ))}
                   </div>
                 </div>
-              ))}
+              )}
+
+              {certificate.metadata.image && (
+                <div className="certificate-image-section">
+                  <h3>Certificate Image</h3>
+                  <img
+                    src={certificate.metadata.image}
+                    alt="Certificate"
+                    className="certificate-image"
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                    }}
+                  />
+                </div>
+              )}
+            </>
+          )}
+
+          <div className="blockchain-info">
+            <h3>Blockchain Information</h3>
+            <div className="info-grid">
+              <div className="info-item">
+                <div className="label">Mint Address</div>
+                <code className="value">{mintAddress.slice(0, 15)}...{mintAddress.slice(-4)}</code>
+              </div>
+
+              {certificate.metadataAddress && (
+                <div className="info-item">
+                  <div className="label">Metadata Address</div>
+                  <code className="value">{certificate.metadataAddress.slice(0, 15)}...{certificate.metadataAddress.slice(-4)}</code>
+                </div>
+              )}
+            </div>
+
+            <div className="explorer-links">
+              <a
+                href={`https://explorer.solana.com/address/${mintAddress}?cluster=devnet`}
+                className="btn-link"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                📊 View on Solana Explorer
+              </a>
+              <a
+                href={`https://explorer.solana.com/token/${mintAddress}?cluster=devnet`}
+                className="btn-link"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                🪙 View Token Details
+              </a>
             </div>
           </div>
-        )}
 
-        {/* Info Box */}
-        <div className="info-box">
-          <h3>What is Certificate Claiming?</h3>
-          <ul>
-            <li>🎓 You receive a certificate hash from your university</li>
-            <li>🔐 You claim it with your wallet to prove ownership</li>
-            <li>✓ Once claimed, only you can access it</li>
-            <li>🌐 Certificate is stored on blockchain forever</li>
-            <li>📲 Generate QR code to share with employers</li>
-          </ul>
+          {certificate.metadata?.external_url && (
+            <div className="action-buttons">
+              <a
+                href={certificate.metadata.external_url}
+                className="btn-action"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                🔗 Certificate Link
+              </a>
+            </div>
+          )}
         </div>
+      )}
+
+      <div className="info-section">
+        <h3>About Your Certificate</h3>
+        <ul>
+          <li>🪙 Your certificate is minted as a unique NFT on Solana</li>
+          <li>💼 The NFT contains your certificate metadata and student information</li>
+          <li>🔐 You can prove ownership by controlling the wallet that received the NFT</li>
+          <li>⛓️ All certificate data is stored permanently on the Solana blockchain</li>
+          <li>📊 View all transactions on Solana Explorer for full transparency</li>
+        </ul>
       </div>
     </div>
   );

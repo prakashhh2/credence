@@ -1,127 +1,317 @@
-import React, { useState } from 'react';
-import { connectWallet, issueCertificateOnChain } from '../web3/web3Service';
-import QRCode from 'qrcode';
+import React, { useState, useCallback } from 'react';
+import { useWallet, useConnection } from '@solana/wallet-adapter-react';
+import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
+import { issueCertificateOnSolana } from '../Services/solanaBlockchainServices';
 import './AdminPortal.css';
 
 export default function AdminPortal() {
-  const [account, setAccount] = useState(null);
-  const [file, setFile] = useState(null);
-  const [studentEmail, setStudentEmail] = useState('');
-  const [status, setStatus] = useState('');
-  const [qrDataUrl, setQrDataUrl] = useState(null);
-  const [authorized, setAuthorized] = useState(false);
-
-  const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:4001';
-
-  const handleConnect = async () => {
-    try {
-      const { address } = await connectWallet();
-      setAccount(address);
-      setStatus(`Connected ${address}`);
-      // check on-chain issuer/admin role
-      const { isIssuer, isAdmin } = await import('../web3/web3Service');
-      const issuerOk = await isIssuer(address);
-      const adminOk = await isAdmin(address);
-      if (issuerOk || adminOk) {
-        setAuthorized(true);
-        setStatus((s) => s + ' — authorized');
-      } else {
-        setAuthorized(false);
-        setStatus((s) => s + ' — not authorized to issue');
-      }
-    } catch (err) {
-      setStatus('Connect failed: ' + err.message);
-    }
-  };
-
-  const handleFile = (e) => {
-    setFile(e.target.files[0]);
-  };
-
+  const { publicKey, signTransaction } = useWallet();
+  const { connection } = useConnection();
   
+  const [studentName, setStudentName] = useState('');
+  const [universityName, setUniversityName] = useState('');
+  const [degreeTitle, setDegreeTitle] = useState('');
+  const [issueDate, setIssueDate] = useState(new Date().toISOString().split('T')[0]);
+  const [certificateFile, setCertificateFile] = useState(null);
+  const [studentPhotoFile, setStudentPhotoFile] = useState(null);
+  const [status, setStatus] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState(null);
+
+  const handleCertificateFile = useCallback((e) => {
+    setCertificateFile(e.target.files?.[0] || null);
+  }, []);
+
+  const handlePhotoFile = useCallback((e) => {
+    setStudentPhotoFile(e.target.files?.[0] || null);
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!account) return setStatus('Connect wallet first');
-    if (!file) return setStatus('Select a file');
-    if (!studentEmail) return setStatus('Provide student email');
+    
+    // Validation
+    if (!publicKey) {
+      setStatus('❌ Please connect your wallet first');
+      return;
+    }
 
-    if (!authorized) return setStatus('Wallet not authorized to issue certificates');
-    setStatus('Hashing file...');
-    const form = new FormData();
-    form.append('file', file);
-    // Compute hash via backend
-    const hashRes = await fetch(`${backendUrl}/hash`, { method: 'POST', body: form });
-    const hashJson = await hashRes.json();
-    const certHex = hashJson.sha256; // 64 hex chars
+    if (!studentName.trim()) {
+      setStatus('❌ Please enter student name');
+      return;
+    }
 
-    setStatus('Uploading file to IPFS...');
-    const pinForm = new FormData();
-    pinForm.append('file', file);
-    const pinRes = await fetch(`${backendUrl}/pinata/pin`, { method: 'POST', body: pinForm });
-    const pinJson = await pinRes.json();
-    const ipfsHash = pinJson.IpfsHash || pinJson.IpfsHash || (pinJson.IpfsHash ? pinJson.IpfsHash : (pinJson.IpfsHash));
+    if (!universityName.trim()) {
+      setStatus('❌ Please enter university name');
+      return;
+    }
 
-    setStatus('Issuing on-chain...');
+    if (!degreeTitle.trim()) {
+      setStatus('❌ Please enter degree title');
+      return;
+    }
+
+    if (!certificateFile) {
+      setStatus('❌ Please select a certificate file');
+      return;
+    }
+
+    setLoading(true);
+    setStatus('Processing...');
+    setResult(null);
+
     try {
-      const issueRes = await issueCertificateOnChain({ certificateHash: certHex, ipfsHash, metadataURI: '' });
-      setStatus('Transaction confirmed: ' + issueRes.transactionHash);
+      // Generate unique certificate ID
+      const certificateId = `CERT-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
 
-      // generate QR linking to verify route
-      const verifyUrl = (process.env.REACT_APP_FRONTEND_URL || window.location.origin) + '/#verify/' + certHex;
-      const qr = await QRCode.toDataURL(verifyUrl);
-      setQrDataUrl(qr);
+      setStatus('📄 Issuing certificate on Solana Devnet...');
 
-      // notify backend to store and email student
-      // include signature from issuer to prove authenticity
-      const message = `I issued certificate ${certHex} for ${studentEmail} at ${new Date().toISOString()}`;
-      const provider = new (await import('ethers')).ethers.BrowserProvider(window.ethereum);
-      const signer = await provider.getSigner();
-      const signature = await signer.signMessage(message);
+      // Create wallet adapter object for the service
+      const walletAdapter = {
+        publicKey,
+        signTransaction,
+      };
 
-      await fetch(`${backendUrl}/admin/issue`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ certHash: certHex, ipfsHash, studentEmail, issuer: account, txHash: issueRes.transactionHash, metadata: {}, signature, message }),
+      // Issue certificate
+      const issueResult = await issueCertificateOnSolana({
+        wallet: walletAdapter,
+        certificateId,
+        studentName,
+        degreeTitle,
+        universityName,
+        issueDate,
+        certificateFile,
+        studentPhotoFile,
       });
 
-      setStatus('Issued and notified student');
-    } catch (err) {
-      setStatus('Issue failed: ' + (err.message || err));
+      setStatus('✅ Certificate issued successfully!');
+      setResult({
+        mintAddress: issueResult.mintAddress,
+        txSignature: issueResult.txSignature,
+        certificateHash: issueResult.certificateHash,
+        qrCode: issueResult.qrCode,
+        certificateId,
+      });
+
+      // Reset form
+      setStudentName('');
+      setUniversityName('');
+      setDegreeTitle('');
+      setIssueDate(new Date().toISOString().split('T')[0]);
+      setCertificateFile(null);
+      setStudentPhotoFile(null);
+    } catch (error) {
+      console.error('Error issuing certificate:', error);
+      setStatus(`❌ Error: ${error.message}`);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="admin-portal">
-      <h1>Admin — Issue Certificate</h1>
-      <div>
-        {account ? (
-          <div>Connected: {account} {authorized ? '(authorized)' : '(not authorized)'}</div>
-        ) : (
-          <button onClick={handleConnect}>Connect MetaMask</button>
-        )}
+      <div className="admin-header">
+        <h1>🎓 University Portal — Issue Certificate</h1>
+        <p>Mint digital certificates as NFTs on Solana Devnet</p>
+      </div>
+
+      <div className="wallet-section">
+        <div className="wallet-status">
+          {publicKey ? (
+            <div className="wallet-connected">
+              <span className="wallet-indicator">🟢</span>
+              <div>
+                <div className="wallet-label">Connected Wallet</div>
+                <div className="wallet-address">{publicKey.toBase58().slice(0, 10)}...{publicKey.toBase58().slice(-4)}</div>
+              </div>
+            </div>
+          ) : (
+            <div className="wallet-disconnected">
+              <span className="wallet-indicator">🔴</span>
+              <span>Wallet not connected</span>
+            </div>
+          )}
+        </div>
+        <WalletMultiButton className="wallet-button" />
       </div>
 
       <form onSubmit={handleSubmit} className="admin-form">
-        <div>
-          <label>Student Email</label>
-          <input value={studentEmail} onChange={(e) => setStudentEmail(e.target.value)} placeholder="student@example.edu" />
+        <div className="form-section">
+          <h2>Certificate Details</h2>
+
+          <div className="form-group">
+            <label htmlFor="studentName">Student Name *</label>
+            <input
+              id="studentName"
+              type="text"
+              value={studentName}
+              onChange={(e) => setStudentName(e.target.value)}
+              placeholder="John Doe"
+              disabled={loading}
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="universityName">University Name *</label>
+            <input
+              id="universityName"
+              type="text"
+              value={universityName}
+              onChange={(e) => setUniversityName(e.target.value)}
+              placeholder="Stanford University"
+              disabled={loading}
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="degreeTitle">Degree/Certification Title *</label>
+            <input
+              id="degreeTitle"
+              type="text"
+              value={degreeTitle}
+              onChange={(e) => setDegreeTitle(e.target.value)}
+              placeholder="Bachelor of Science in Computer Science"
+              disabled={loading}
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="issueDate">Issue Date *</label>
+            <input
+              id="issueDate"
+              type="date"
+              value={issueDate}
+              onChange={(e) => setIssueDate(e.target.value)}
+              disabled={loading}
+              required
+            />
+          </div>
         </div>
 
-        <div>
-          <label>Certificate PDF</label>
-          <input type="file" accept="application/pdf,image/*" onChange={handleFile} />
+        <div className="form-section">
+          <h2>Files</h2>
+
+          <div className="form-group">
+            <label htmlFor="certificateFile">Certificate File (PDF/Image) *</label>
+            <input
+              id="certificateFile"
+              type="file"
+              accept=".pdf,.jpg,.jpeg,.png,.gif"
+              onChange={handleCertificateFile}
+              disabled={loading}
+              required
+            />
+            {certificateFile && <p className="file-info">📄 {certificateFile.name} ({(certificateFile.size / 1024).toFixed(2)} KB)</p>}
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="studentPhotoFile">Student Photo (Optional)</label>
+            <input
+              id="studentPhotoFile"
+              type="file"
+              accept=".jpg,.jpeg,.png,.gif"
+              onChange={handlePhotoFile}
+              disabled={loading}
+            />
+            {studentPhotoFile && <p className="file-info">📷 {studentPhotoFile.name} ({(studentPhotoFile.size / 1024).toFixed(2)} KB)</p>}
+          </div>
         </div>
 
-        <button type="submit">Upload & Issue</button>
+        <button
+          type="submit"
+          disabled={loading || !publicKey}
+          className={`btn-submit ${loading ? 'loading' : ''}`}
+        >
+          {loading ? '⏳ Processing...' : '🚀 Mint Certificate NFT'}
+        </button>
       </form>
 
-      <div className="status">{status}</div>
+      {status && (
+        <div className={`status-message ${status.startsWith('✅') ? 'success' : status.startsWith('❌') ? 'error' : 'info'}`}>
+          {status}
+        </div>
+      )}
 
-      {qrDataUrl && (
-        <div className="qr">
-          <h3>Certificate QR</h3>
-          <img src={qrDataUrl} alt="qr" />
+      {result && (
+        <div className="result-card">
+          <h2>✅ Certificate Issued Successfully!</h2>
+
+          <div className="result-detail">
+            <div className="label">Certificate ID:</div>
+            <div className="value">{result.certificateId}</div>
+          </div>
+
+          <div className="result-detail">
+            <div className="label">Mint Address:</div>
+            <div className="value copy-able" title={result.mintAddress}>
+              {result.mintAddress}
+              <button
+                type="button"
+                className="copy-btn"
+                onClick={() => navigator.clipboard.writeText(result.mintAddress)}
+                title="Copy to clipboard"
+              >
+                📋
+              </button>
+            </div>
+          </div>
+
+          <div className="result-detail">
+            <div className="label">Transaction Signature:</div>
+            <div className="value copy-able" title={result.txSignature}>
+              {result.txSignature.slice(0, 20)}...
+              <button
+                type="button"
+                className="copy-btn"
+                onClick={() => navigator.clipboard.writeText(result.txSignature)}
+                title="Copy to clipboard"
+              >
+                📋
+              </button>
+            </div>
+          </div>
+
+          <div className="result-detail">
+            <div className="label">Certificate Hash (SHA-256):</div>
+            <div className="value copy-able" title={result.certificateHash}>
+              {result.certificateHash.slice(0, 20)}...
+              <button
+                type="button"
+                className="copy-btn"
+                onClick={() => navigator.clipboard.writeText(result.certificateHash)}
+                title="Copy to clipboard"
+              >
+                📋
+              </button>
+            </div>
+          </div>
+
+          <div className="result-qr">
+            <h3>Verification QR Code</h3>
+            <img src={result.qrCode} alt="Certificate verification QR code" />
+            <p className="qr-hint">Share this QR with the certificate holder for easy verification</p>
+          </div>
+
+          <div className="result-links">
+            <a
+              href={`/#verify?mint=${result.mintAddress}&sig=${result.txSignature}`}
+              className="btn-link"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              🔍 View Certificate
+            </a>
+            <a
+              href={`https://explorer.solana.com/tx/${result.txSignature}?cluster=devnet`}
+              className="btn-link"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              📊 View on Solana Explorer
+            </a>
+          </div>
         </div>
       )}
     </div>

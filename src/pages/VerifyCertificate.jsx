@@ -1,228 +1,224 @@
 import React, { useEffect, useState } from 'react';
-import { verifyCertificateOnBlockchain, getCertificateDetails } from '../Services/blockchainServices';
+import { verifyCertificateOnSolana, getCertificateDetails } from '../Services/solanaBlockchainServices';
+import { isValidSolanaAddress } from '../web3/solanaService';
 import './VerifyCertificate.css';
 
-const VerifyCertificate = ({ hash: initialHash }) => {
-  const hash = initialHash || window.location.hash.split('/')[1] || '';
-  const [certificateHash, setCertificateHash] = useState(hash || '');
-  const [certificate, setCertificate] = useState(null);
+const VerifyCertificate = ({ mint: initialMint }) => {
+  // Get mint address from URL query parameter or prop
+  const urlParams = new URLSearchParams(window.location.search);
+  const queryMint = urlParams.get('mint');
+  const initialAddress = initialMint || queryMint || '';
+
+  const [mintAddress, setMintAddress] = useState(initialAddress);
   const [verification, setVerification] = useState(null);
+  const [certificate, setCertificate] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const handleVerify = async (e) => {
-    e.preventDefault();
+    e?.preventDefault?.();
 
-    if (!certificateHash.trim()) {
-      setError('Please enter a certificate hash');
+    if (!mintAddress.trim()) {
+      setError('❌ Please enter a mint address');
+      return;
+    }
+
+    if (!isValidSolanaAddress(mintAddress)) {
+      setError('❌ Invalid Solana mint address');
       return;
     }
 
     setLoading(true);
     setError(null);
-    setCertificate(null);
     setVerification(null);
+    setCertificate(null);
 
     try {
-      // Verify certificate exists on blockchain
-      const verifyResult = await verifyCertificateOnBlockchain(certificateHash);
+      // Verify certificate on Solana
+      const verifyResult = await verifyCertificateOnSolana(mintAddress);
       setVerification(verifyResult);
 
-      if (verifyResult.exists) {
+      if (verifyResult.verified) {
         // Get full certificate details
-        const certDetails = await getCertificateDetails(certificateHash);
-        setCertificate(certDetails);
+        try {
+          const certDetails = await getCertificateDetails(mintAddress);
+          setCertificate(certDetails);
+        } catch (err) {
+          console.warn('Could not fetch full certificate details:', err);
+        }
       }
     } catch (err) {
-      setError(err.message || 'Failed to verify certificate');
+      setError(`❌ ${err.message || 'Failed to verify certificate'}`);
     } finally {
       setLoading(false);
     }
   };
 
+  // Auto-verify if mint address provided
   useEffect(() => {
-    if (hash) {
-      handleVerify({ preventDefault: () => {} });
+    if (initialAddress && isValidSolanaAddress(initialAddress)) {
+      handleVerify();
     }
-  }, [hash]);
+  }, []);
 
   return (
     <div className="verify-page">
       <div className="verify-container">
         <div className="verify-header">
-          <h1>Verify Certificate</h1>
-          <p>Check the authenticity of any academic certificate on the blockchain</p>
+          <h1>🔐 Verify Certificate</h1>
+          <p>Check the authenticity of any academic certificate minted on Solana Devnet</p>
         </div>
 
         {/* Search Form */}
         <form onSubmit={handleVerify} className="verify-form">
           <div className="form-group">
-            <label htmlFor="hashInput">Certificate Hash</label>
+            <label htmlFor="mintInput">NFT Mint Address</label>
             <input
               type="text"
-              id="hashInput"
-              value={certificateHash}
-              onChange={(e) => setCertificateHash(e.target.value)}
-              placeholder="Enter certificate hash..."
+              id="mintInput"
+              value={mintAddress}
+              onChange={(e) => setMintAddress(e.target.value)}
+              placeholder="Enter mint address (e.g., 6XxjjxJ...)"
               disabled={loading}
             />
+            <p className="form-hint">Enter the Solana mint address of the certificate NFT</p>
           </div>
 
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             className="btn-verify"
-            disabled={loading}
+            disabled={loading || !mintAddress.trim()}
           >
-            {loading ? 'Verifying...' : 'Verify Certificate'}
+            {loading ? '⏳ Verifying...' : '🔍 Verify Certificate'}
           </button>
         </form>
 
         {/* Error Message */}
         {error && (
           <div className="error-message">
-            <strong>Error:</strong> {error}
+            {error}
           </div>
         )}
 
         {/* Verification Result */}
         {verification && (
-          <div className={`verification-result ${verification.exists ? 'valid' : 'invalid'}`}>
+          <div className={`verification-result ${verification.verified ? 'valid' : 'invalid'}`}>
             <div className="result-status">
-              {verification.exists ? (
+              {verification.verified ? (
                 <>
                   <span className="status-icon">✓</span>
                   <h2>Certificate Verified</h2>
-                  <p>This certificate is authentic and stored on blockchain</p>
+                  <p>This certificate is authentic and minted on Solana Devnet</p>
                 </>
               ) : (
                 <>
                   <span className="status-icon invalid">✗</span>
                   <h2>Certificate Not Found</h2>
-                  <p>This certificate hash does not exist on blockchain</p>
+                  <p>This mint address does not exist on the blockchain</p>
                 </>
               )}
             </div>
 
-            {verification.exists && (
+            {verification.verified && (
               <div className="verification-details">
                 <div className="detail-grid">
                   <div className="detail-item">
-                    <label>Student Name</label>
-                    <p>{verification.studentName || 'N/A'}</p>
-                  </div>
-
-                  <div className="detail-item">
-                    <label>Degree</label>
-                    <p>{verification.degree || 'N/A'}</p>
-                  </div>
-
-                  <div className="detail-item">
-                    <label>Claimed Status</label>
+                    <label>Verification Status</label>
                     <p>
-                      {verification.isClaimed ? (
-                        <span className="status-badge claimed">✓ Claimed</span>
-                      ) : (
-                        <span className="status-badge unclaimed">◯ Unclaimed</span>
-                      )}
+                      <span className="status-badge verified">✓ On-Chain</span>
                     </p>
                   </div>
 
                   <div className="detail-item">
-                    <label>Revoked Status</label>
-                    <p>
-                      {verification.isRevoked ? (
-                        <span className="status-badge revoked">✗ Revoked</span>
-                      ) : (
-                        <span className="status-badge active">✓ Active</span>
-                      )}
-                    </p>
+                    <label>Verified At</label>
+                    <p>{new Date(verification.verifiedAt).toLocaleString()}</p>
                   </div>
+
+                  <div className="detail-item">
+                    <label>Mint Address</label>
+                    <code className="address">{mintAddress.slice(0, 15)}...{mintAddress.slice(-4)}</code>
+                  </div>
+                </div>
+
+                <div className="explorer-links">
+                  <a
+                    href={`https://explorer.solana.com/address/${mintAddress}?cluster=devnet`}
+                    className="btn-explorer"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    📊 View on Solana Explorer
+                  </a>
+                  <a
+                    href={`https://explorer.solana.com/token/${mintAddress}?cluster=devnet`}
+                    className="btn-explorer"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    🪙 View Token Details
+                  </a>
                 </div>
               </div>
             )}
           </div>
         )}
 
-        {/* Full Certificate Details */}
+        {/* Certificate Metadata */}
         {certificate && (
           <div className="certificate-details">
-            <h2>Certificate Details</h2>
+            <h2>Certificate Information</h2>
 
             <div className="details-section">
-              <div className="section-column">
-                <div className="detail-box">
-                  <h3>Student Information</h3>
-                  <div className="detail-row">
-                    <span className="label">Name:</span>
-                    <span className="value">{certificate.studentName}</span>
+              {certificate.metadata && (
+                <>
+                  <div className="detail-box">
+                    <h3>Certificate Attributes</h3>
+                    <div className="attributes-list">
+                      {certificate.metadata.attributes?.map((attr, idx) => (
+                        <div key={idx} className="attribute-item">
+                          <span className="attr-label">{attr.trait_type}:</span>
+                          <span className="attr-value">{attr.value}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                  <div className="detail-row">
-                    <span className="label">Degree:</span>
-                    <span className="value">{certificate.degree}</span>
-                  </div>
-                  <div className="detail-row">
-                    <span className="label">Issue Date:</span>
-                    <span className="value">{certificate.issueDate}</span>
-                  </div>
-                  <div className="detail-row">
-                    <span className="label">University:</span>
-                    <span className="value">{certificate.universityName}</span>
-                  </div>
-                </div>
 
-                <div className="detail-box">
-                  <h3>Blockchain Information</h3>
-                  <div className="detail-row">
-                    <span className="label">Certificate Hash:</span>
-                    <code className="hash">{certificate.certificateHash}</code>
-                  </div>
-                  <div className="detail-row">
-                    <span className="label">IPFS Hash:</span>
-                    <code className="hash">{certificate.ipfsHash}</code>
-                  </div>
-                  <div className="detail-row">
-                    <span className="label">Issued By:</span>
-                    <code className="hash">{certificate.issuedBy}</code>
-                  </div>
-                  {certificate.claimedBy && (
-                    <div className="detail-row">
-                      <span className="label">Claimed By:</span>
-                      <code className="hash">{certificate.claimedBy}</code>
+                  {certificate.metadata.description && (
+                    <div className="detail-box">
+                      <h3>Description</h3>
+                      <p>{certificate.metadata.description}</p>
                     </div>
                   )}
-                </div>
-              </div>
 
-              <div className="section-column">
-                <div className="detail-box">
-                  <h3>Dates</h3>
-                  <div className="detail-row">
-                    <span className="label">Issued At:</span>
-                    <span className="value">{certificate.issuedAt?.toLocaleString()}</span>
-                  </div>
-                  {certificate.claimedAt && (
-                    <div className="detail-row">
-                      <span className="label">Claimed At:</span>
-                      <span className="value">{certificate.claimedAt.toLocaleString()}</span>
+                  {certificate.metadata.image && (
+                    <div className="detail-box">
+                      <h3>Certificate Image</h3>
+                      <img
+                        src={certificate.metadata.image}
+                        alt="Certificate"
+                        className="cert-image"
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                        }}
+                      />
                     </div>
                   )}
-                </div>
+                </>
+              )}
 
-                <div className="detail-box">
-                  <h3>Document</h3>
-                  {certificate.ipfsUrl && (
-                    <a 
-                      href={certificate.ipfsUrl} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="btn-view-document"
-                    >
-                      📄 View Certificate File
-                    </a>
-                  )}
-                  {certificate.metadataURI && (
-                    <p className="metadata-uri">{certificate.metadataURI}</p>
-                  )}
+              <div className="detail-box">
+                <h3>On-Chain Metadata</h3>
+                <div className="detail-row">
+                  <span className="label">Mint Address:</span>
+                  <code className="hash">{mintAddress}</code>
+                </div>
+                <div className="detail-row">
+                  <span className="label">Metadata Address:</span>
+                  <code className="hash">{certificate?.metadataAddress || 'N/A'}</code>
+                </div>
+                <div className="detail-row">
+                  <span className="label">Status:</span>
+                  <span className="status-badge">On-Chain</span>
                 </div>
               </div>
             </div>
@@ -231,13 +227,14 @@ const VerifyCertificate = ({ hash: initialHash }) => {
 
         {/* Info Box */}
         <div className="info-section">
-          <h3>How Verification Works</h3>
+          <h3>How Solana Certificate Verification Works</h3>
           <ul>
-            <li>🔐 Every certificate has a unique SHA-256 hash</li>
-            <li>⛓️ The hash is stored permanently on blockchain</li>
-            <li>📁 The actual certificate file is stored on IPFS</li>
-            <li>✓ Verification checks both blockchain and IPFS</li>
-            <li>🔍 Anyone can verify without login or registration</li>
+            <li>🪙 Each certificate is minted as a unique NFT on Solana</li>
+            <li>⛓️ The NFT metadata is stored permanently on-chain</li>
+            <li>🔐 Certificate hash ensures document integrity</li>
+            <li>🌐 Metadata includes student info, issuer, and issue date</li>
+            <li>✓ Anyone can verify on public Solana Devnet</li>
+            <li>📊 Full transaction history available on Solana Explorer</li>
           </ul>
         </div>
       </div>
