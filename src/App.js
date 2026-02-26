@@ -10,12 +10,10 @@ import "./App.css";
 import { useState, useEffect } from "react";
 import Navbar from "./components/layout/Navbar.jsx";
 import Footer from "./components/layout/Footer.jsx";
-import WalletButton from "./components/ui/walletButton.js";
 // UniversityPortal removed; issuance moved to AdminPortal
 import StudentPortal from "./pages/StudentPortal.jsx";
 import VerifyCertificate from "./pages/VerifyCertificate.jsx";
 import AdminPortal from "./pages/AdminPortal.jsx";
-import { CertificateProvider } from "./context/CertificateContext";
 import logo from "./assets/transparent-logo.png";
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -283,10 +281,8 @@ function HomePage() {
     <>
       {/* LEFT — Wallet Identity */}
       <div className="hero-wallet">
-        <WalletButton />
         <p className="wallet-hint">
-          Connect your wallet to verify or issue academic
-          credentials securely on the blockchain.
+          Secure academic credentials verification platform.
         </p>
       </div>
     </>

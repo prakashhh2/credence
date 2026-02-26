@@ -41,10 +41,10 @@ const Footer = () => {
         <div className="footer-section">
           <h3>Connect</h3>
           <ul>
-            <li><a href="#">GitHub</a></li>
-            <li><a href="#">LinkedIn</a></li>
-            <li><a href="#">X (Twitter)</a></li>
-            <li><a href="#">Discord</a></li>
+            <li><a href="https://github.com">GitHub</a></li>
+            <li><a href="https://linkedin.com">LinkedIn</a></li>
+            <li><a href="https://x.com">X (Twitter)</a></li>
+            <li><a href="https://discord.com">Discord</a></li>
           </ul>
         </div>
 

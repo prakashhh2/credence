@@ -5,12 +5,6 @@
   "dependencies": {
     "@babel/core": "^7.16.0",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.3",
-    "@solana/spl-token": "^0.1.8",
-    "@solana/wallet-adapter-base": "^0.9.22",
-    "@solana/wallet-adapter-react": "^0.15.32",
-    "@solana/wallet-adapter-react-ui": "^0.9.35",
-    "@solana/wallet-adapter-wallets": "^0.16.1",
-    "@solana/web3.js": "^1.78.0",
     "@svgr/webpack": "^8.1.0",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",
@@ -23,10 +17,8 @@
     "babel-preset-react-app": "^10.0.1",
     "bfj": "^7.0.2",
     "browserslist": "^4.18.1",
-    "bs58": "^5.0.0",
     "camelcase": "^6.2.1",
     "case-sensitive-paths-webpack-plugin": "^2.4.0",
-    "crypto-browserify": "^3.5.1",
     "css-loader": "^6.5.1",
     "css-minimizer-webpack-plugin": "^3.2.0",
     "dotenv": "^10.0.0",
@@ -59,11 +51,9 @@
     "sass-loader": "^12.3.0",
     "semver": "^7.3.5",
     "source-map-loader": "^3.0.0",
-    "stream-browserify": "^3.0.0",
     "style-loader": "^3.3.1",
     "tailwindcss": "^3.0.2",
     "terser-webpack-plugin": "^5.2.5",
-    "tweetnacl": "^1.0.3",
     "web-vitals": "^2.1.4",
     "webpack": "^5.64.4",
     "webpack-dev-server": "^5.2.3",
@@ -73,12 +63,7 @@
   "scripts": {
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
-    "test": "node scripts/test.js",
-    "hardhat:compile": "npx hardhat compile",
-    "hardhat:deploy": "npx hardhat run scripts/deploy.js --network sepolia",
-    "hardhat:node": "npx hardhat node",
-    "indexer:start": "node scripts/indexer.js",
-    "backend:start": "node backend/app.js"
+    "test": "node scripts/test.js"
   },
   "eslintConfig": {
     "extends": [
