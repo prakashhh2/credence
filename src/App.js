@@ -13,7 +13,6 @@ import Footer from "./components/layout/Footer.jsx";
 import StudentPortal from "./pages/StudentPortal.jsx";
 import VerifyCertificate from "./pages/VerifyCertificate.jsx";
 import AdminPortal from "./pages/AdminPortal.jsx";
-import UniversityRegister from "./pages/UniversityRegister.jsx";
 import logo from "./assets/transparent-logo.png";
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -82,9 +81,6 @@ function App() {
       case "student":
         return <StudentPortal />;
       case "admin":
-        if (!localStorage.getItem('credence_uni_name')) {
-          return <UniversityRegister />;
-        }
         return <AdminPortal />;
       case "verify":
         const hash = window.location.hash.split("/")[1];

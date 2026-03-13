@@ -42,8 +42,9 @@ const CERT_FIELDS = [
 // main component
 
 export default function AdminPortal() {
-  
-  const universityName = localStorage.getItem('credence_uni_name') || 'University';
+  const [universityName, setUniversityName] = useState(localStorage.getItem('credence_uni_name') || '');
+  const [universityInput, setUniversityInput] = useState(localStorage.getItem('credence_uni_name') || '');
+  const [universityError, setUniversityError] = useState('');
 
   const [form, setForm] = useState({
     studentName: '', studentEmail: '', studentId: '', dateOfBirth: '',
@@ -147,6 +148,18 @@ export default function AdminPortal() {
   /* ── Form Handlers ── */
   const handleChange = (id, value) => setForm((f) => ({ ...f, [id]: value }));
 
+  const saveUniversityName = useCallback((e) => {
+    e.preventDefault();
+    const trimmed = universityInput.trim();
+    if (!trimmed) {
+      setUniversityError('Please enter your university or college name.');
+      return;
+    }
+    localStorage.setItem('credence_uni_name', trimmed);
+    setUniversityName(trimmed);
+    setUniversityError('');
+  }, [universityInput]);
+
   const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
     setFormError('');
@@ -156,10 +169,8 @@ export default function AdminPortal() {
       return;
     }
 
-    // Validate that institution name contains "University" or "College"
-    const lowerUniName = universityName.toLowerCase();
-    if (!lowerUniName.includes('university') && !lowerUniName.includes('college')) {
-      setFormError('Institution name must contain "University" or "College". Please update your registration.');
+    if (!universityName.trim()) {
+      setFormError('Please save your institution name above before issuing a certificate.');
       return;
     }
 
@@ -265,13 +276,38 @@ export default function AdminPortal() {
         <div className="univ-header-inner">
           <div className="univ-header-icon">🎓</div>
           <div>
-            <h1>{universityName}</h1>
+            <h1>{universityName || 'University Admin Portal'}</h1>
             <p>Issue Solana blockchain certificates via Anchor</p>
           </div>
         </div>
       </div>
 
       <div className="univ-content">
+
+        {/* University Registration Form (non-blocking) */}
+        <div className="univ-card university-card">
+          <div className="card-label">
+            <span className="label-dot solana-dot" />
+            Institution Profile
+          </div>
+          <form className="university-form-inline" onSubmit={saveUniversityName}>
+            <div className="form-group">
+              <label htmlFor="universityName">University / College Name</label>
+              <input
+                id="universityName"
+                type="text"
+                value={universityInput}
+                onChange={(e) => {
+                  setUniversityInput(e.target.value);
+                  setUniversityError('');
+                }}
+                placeholder="e.g. Harvard University"
+              />
+            </div>
+            <button type="submit" className="btn-ghost-sm">Save Institution</button>
+          </form>
+          {universityError && <p className="error-inline">{universityError}</p>}
+        </div>
 
         {/* Wallet Connection Card */}
         <div className="univ-card wallet-card">

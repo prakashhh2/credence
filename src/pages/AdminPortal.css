@@ -226,6 +226,22 @@
 }
 
 /* ════════════════════════════════════════════════════════
+   University Form Card
+   ════════════════════════════════════════════════════════ */
+
+.university-form-inline {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.university-form-inline .form-group {
+  flex: 1;
+  min-width: 280px;
+}
+
+/* ════════════════════════════════════════════════════════
    Form Card
    ════════════════════════════════════════════════════════ */
 
