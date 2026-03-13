@@ -10,10 +10,10 @@ import "./App.css";
 import { useState, useEffect } from "react";
 import Navbar from "./components/layout/Navbar.jsx";
 import Footer from "./components/layout/Footer.jsx";
-// UniversityPortal removed; issuance moved to AdminPortal
 import StudentPortal from "./pages/StudentPortal.jsx";
 import VerifyCertificate from "./pages/VerifyCertificate.jsx";
 import AdminPortal from "./pages/AdminPortal.jsx";
+import UniversityRegister from "./pages/UniversityRegister.jsx";
 import logo from "./assets/transparent-logo.png";
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -79,10 +79,12 @@ function App() {
 
   const renderPage = () => {
     switch (currentPage) {
-      // removed university route
       case "student":
         return <StudentPortal />;
       case "admin":
+        if (!localStorage.getItem('credence_uni_name')) {
+          return <UniversityRegister />;
+        }
         return <AdminPortal />;
       case "verify":
         const hash = window.location.hash.split("/")[1];
@@ -206,17 +208,17 @@ function App() {
             <h3>For Different Users</h3>
 
             <div className="user-roles">
-              <InfoCard title="👨‍🎓 Students" variant="minimal">
+              <InfoCard title=" Students" variant="minimal">
                 Access your digital certificates anytime, anywhere. Share your achievements securely 
                 with employers or educational institutions without worrying about forgery.
               </InfoCard>
 
-              <InfoCard title="🏫 Universities" variant="minimal">
+              <InfoCard title="Universities" variant="minimal">
                 Issue verified academic credentials with minimal effort. Reduce credential verification requests 
                 and strengthen your institution's reputation through blockchain.
               </InfoCard>
 
-              <InfoCard title="💼 Employers" variant="minimal">
+              <InfoCard title=" Employers" variant="minimal">
                 Instantly verify employee credentials on the blockchain. Eliminate the need for traditional 
                 background checks and reduce hiring time.
               </InfoCard>

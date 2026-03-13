@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
+import Certificate from '../components/Certificate';
 import './VerifyCertificate.css';
 
 /* ─────────────────────────────────────────────────────────────
@@ -107,52 +108,7 @@ const VerifyCertificate = ({ hash: propHash }) => {
 
         {/* Result — Verified */}
         {status === 'verified' && certificate && (
-          <div className="vp-card result-card-verified">
-            <div className="vp-result-banner verified-banner">
-              <div className="result-status-icon">✅</div>
-              <div>
-                <h2>Certificate is Valid</h2>
-                <p>This certificate is authentic and recorded on Solana Devnet</p>
-              </div>
-              <div className="vp-blockchain-badge">
-                ⛓ Solana Devnet
-              </div>
-            </div>
-
-            <div className="vp-cert-grid">
-              {[
-                ['Student Name',    certificate.studentName],
-                ['University',      certificate.universityName],
-                ['Degree',          certificate.degreeTitle],
-                ['Field of Study',  certificate.fieldOfStudy],
-                ['Issue Date',      certificate.issueDate],
-                ['Issued At',       new Date(certificate.issuedAt).toLocaleString()],
-                ['Issuer Wallet',   certificate.issuerWallet],
-                ['Blockchain',      'Solana Devnet'],
-              ].map(([label, value]) => (
-                <div className="vp-cert-row" key={label}>
-                  <span className="vp-cert-label">{label}</span>
-                  <span className="vp-cert-value">{value}</span>
-                </div>
-              ))}
-            </div>
-
-            {/* Hash */}
-            <div className="vp-hash-section">
-              <div className="vp-hash-label">Certificate Hash (SHA-256)</div>
-              <div className="vp-hash-value">{certificate.hash}</div>
-            </div>
-
-            {/* QR */}
-            {certificate.qrCode && (
-              <div className="vp-qr-section">
-                <div className="vp-qr-frame">
-                  <img src={certificate.qrCode} alt="Certificate QR Code" />
-                </div>
-                <p className="vp-qr-caption">QR Code — scan to re-verify</p>
-              </div>
-            )}
-          </div>
+          <Certificate cert={certificate} onEmailClick={() => {}} />
         )}
 
         {/* Result — Invalid */}

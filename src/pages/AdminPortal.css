@@ -1,11 +1,4 @@
-/**
- * University Dashboard — Credence
- * Premium theme matching home page design system
- */
 
-/* ════════════════════════════════════════════════════════
-   Page Layout
-   ════════════════════════════════════════════════════════ */
 
 .univ-portal {
   min-height: calc(100vh - 64px);
@@ -303,6 +296,206 @@
 .form-group input::placeholder {
   color: #94a3b8;
   font-size: 0.9rem;
+}
+
+/* Select Styles */
+.form-group select {
+  padding: 0.7rem 1rem;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  color: #0f172a;
+  background: #f8fafc;
+  transition: all 0.2s ease;
+  outline: none;
+  font-family: inherit;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2364748b' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  padding-right: 2.5rem;
+}
+
+.form-group select:focus {
+  border-color: #1e88e5;
+  background-color: #fff;
+  box-shadow: 0 0 0 3px rgba(30, 136, 229, 0.12);
+}
+
+/* Textarea Styles */
+.form-group textarea {
+  padding: 0.7rem 1rem;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  color: #0f172a;
+  background: #f8fafc;
+  transition: all 0.2s ease;
+  outline: none;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 80px;
+}
+
+.form-group textarea:focus {
+  border-color: #1e88e5;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(30, 136, 229, 0.12);
+}
+
+.form-group textarea::placeholder {
+  color: #94a3b8;
+  font-size: 0.9rem;
+}
+
+/* Field Hint */
+.field-hint {
+  font-size: 0.75rem;
+  color: #64748b;
+  margin-top: 0.25rem;
+  font-style: italic;
+}
+
+/* ════════════════════════════════════════════════════════
+   File Upload Section
+   ════════════════════════════════════════════════════════ */
+
+.file-upload-section {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.upload-section-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #0b1c3d;
+  margin: 0 0 1.25rem 0;
+}
+
+.file-upload-group {
+  margin-bottom: 1.25rem;
+}
+
+.file-upload-group label {
+  display: block;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #334155;
+  letter-spacing: 0.01em;
+  margin-bottom: 0.5rem;
+}
+
+.optional-label {
+  font-weight: 400;
+  color: #94a3b8;
+  font-size: 0.8rem;
+}
+
+.file-upload-area {
+  position: relative;
+}
+
+.file-drop-zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 2rem 1.5rem;
+  border: 2px dashed #cbd5e1;
+  border-radius: 12px;
+  background: #f8fafc;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  text-align: center;
+}
+
+.file-drop-zone:hover {
+  border-color: #1e88e5;
+  background: #f0f7ff;
+}
+
+.upload-icon {
+  font-size: 2rem;
+  opacity: 0.8;
+}
+
+.file-drop-zone span {
+  font-size: 0.9rem;
+  color: #475569;
+}
+
+.file-hint {
+  font-size: 0.75rem !important;
+  color: #94a3b8 !important;
+}
+
+.file-preview {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  background: #f0f5fb;
+  border: 1px solid #d4e4f7;
+  border-radius: 10px;
+  flex-wrap: wrap;
+}
+
+.file-name {
+  font-size: 0.9rem;
+  color: #0f172a;
+  font-weight: 500;
+}
+
+.uploading-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  color: #1e88e5;
+  background: #e0f2fe;
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+}
+
+.uploading-badge .spinner {
+  width: 12px;
+  height: 12px;
+  border-width: 1.5px;
+  border-color: rgba(30, 136, 229, 0.3);
+  border-top-color: #1e88e5;
+}
+
+.cid-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.78rem;
+  color: #16a34a;
+  background: #dcfce7;
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+}
+
+.btn-remove-file {
+  margin-left: auto;
+  padding: 0.3rem 0.6rem;
+  background: transparent;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  color: #64748b;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-remove-file:hover {
+  background: #fee2e2;
+  border-color: #fecaca;
+  color: #dc2626;
 }
 
 .form-error {

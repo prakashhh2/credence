@@ -1,5 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import QRCode from 'qrcode';
+import Certificate from '../components/Certificate';
+import { downloadFromIPFS } from '../services/ipfsService';
 import './StudentPortal.css';
 
 /* ─────────────────────────────────────────────────────────────
@@ -65,7 +67,7 @@ function downloadCertificateHTML(cert) {
 </head>
 <body>
 <div class="cert">
-  <div class="blockchain-badge">⛓ Solana Devnet · Verified</div>
+  <div class="blockchain-badge">⛓ Blockchain Verified</div>
   <div class="org">${cert.universityName}</div>
   <div class="title">Certificate of Achievement</div>
   <div class="subtitle">This is to certify that</div>
@@ -161,6 +163,19 @@ const StudentPortal = () => {
     a.click();
   }, [qrDataUrl, certificate]);
 
+  /* ── Download from IPFS ── */
+  const downloadFromIPFSHandler = useCallback(() => {
+    if (!certificate?.certificateDocCid) return;
+    
+    try {
+      const filename = `certificate-${certificate.studentName.replace(/\s+/g, '-')}.pdf`;
+      downloadFromIPFS(certificate.certificateDocCid, filename);
+    } catch (err) {
+      console.error('IPFS download error:', err);
+      alert('Failed to download certificate. Please try again.');
+    }
+  }, [certificate]);
+
   /* ─────────────────────────────────────────────────────────
      Render
      ───────────────────────────────────────────────────────── */
@@ -213,71 +228,23 @@ const StudentPortal = () => {
 
         {/* Certificate Display */}
         {certificate && (
-          <div className="sp-card cert-display-card">
+          <div className="sp-card">
+            {/* Use Certificate component for display */}
+            <Certificate cert={certificate} onEmailClick={() => {}} onIPFSDownload={downloadFromIPFSHandler} />
 
-            {/* Banner */}
-            <div className="cert-verified-banner">
-              <span className="cv-icon">✅</span>
-              <div>
-                <h2>Certificate Verified</h2>
-                <p>Recorded on Solana Devnet · Tamper-proof</p>
-              </div>
-            </div>
-
-            <div className="cert-display-body">
-
-              {/* Certificate Details */}
-              <div className="cert-details-col">
-                <h3 className="cert-detail-heading">Certificate Details</h3>
-
-                {[
-                  ['Student Name',   certificate.studentName],
-                  ['University',     certificate.universityName],
-                  ['Degree',         certificate.degreeTitle],
-                  ['Field of Study', certificate.fieldOfStudy],
-                  ['Issue Date',     certificate.issueDate],
-                  ['Issued At',      new Date(certificate.issuedAt).toLocaleString()],
-                  ['Blockchain',     'Solana Devnet'],
-                ].map(([label, value]) => (
-                  <div className="cert-detail-row" key={label}>
-                    <span className="cert-detail-label">{label}</span>
-                    <span className="cert-detail-value">{value}</span>
-                  </div>
-                ))}
-
-                {/* Hash */}
-                <div className="cert-detail-row hash-detail-row">
-                  <span className="cert-detail-label">Certificate Hash</span>
-                  <div className="cert-hash-block">
-                    <span className="cert-hash-text">{certificate.hash}</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* QR & Actions */}
-              <div className="cert-actions-col">
+            {/* Additional Student Portal Downloads */}
+            <div className="sp-extra-downloads" style={{ marginTop: '2rem', paddingTop: '2rem', borderTop: '1px solid #e0e0e0' }}>
+              <h3 style={{ marginBottom: '1rem', fontSize: '1.125rem', fontWeight: 700 }}>Download Options</h3>
+              <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+                <button className="btn-download-cert" onClick={handleDownload}>
+                  ⬇ Download as HTML
+                </button>
                 {qrDataUrl && (
-                  <div className="cert-qr-wrapper">
-                    <h3 className="cert-detail-heading">QR Code</h3>
-                    <div className="cert-qr-frame">
-                      <img src={qrDataUrl} alt="Certificate QR" />
-                    </div>
-                    <p className="qr-scan-hint">Scan to verify online</p>
-                  </div>
-                )}
-
-                <div className="cert-download-section">
-                  <button className="btn-download-cert" onClick={handleDownload}>
-                    ⬇ Download Certificate
+                  <button className="btn-download-qr-sp" onClick={downloadQR}>
+                    ⬇ Download QR Code
                   </button>
-                  {qrDataUrl && (
-                    <button className="btn-download-qr-sp" onClick={downloadQR}>
-                      ⬇ Download QR Code
-                    </button>
-                  )}
-                </div>
+                )}
               </div>
-
             </div>
           </div>
         )}

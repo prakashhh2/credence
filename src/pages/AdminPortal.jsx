@@ -1,10 +1,11 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import QRCode from 'qrcode';
+import Certificate from '../components/Certificate';
+import { uploadToPinata } from '../services/ipfsService';
+import { createCertificateViaAnchor } from '../services/anchorService';
 import './AdminPortal.css';
 
-/* ─────────────────────────────────────────────────────────────
-   Helpers
-   ───────────────────────────────────────────────────────────── */
+// Helper functions
 
 async function sha256(message) {
   const encoder = new TextEncoder();
@@ -21,50 +22,69 @@ function storeCertificate(cert) {
   localStorage.setItem('credence_certs', JSON.stringify(certs));
 }
 
-const FIELDS = [
-  { id: 'studentName',    label: 'Student Name',       placeholder: 'e.g. Jane Smith',                    required: true,  type: 'text'  },
-  { id: 'studentEmail',   label: 'Student Email',       placeholder: 'e.g. jane@university.edu',           required: true,  type: 'email' },
-  { id: 'universityName', label: 'University / Institution', placeholder: 'e.g. MIT',                      required: true,  type: 'text'  },
-  { id: 'degreeTitle',    label: 'Degree / Certificate Title', placeholder: 'e.g. Bachelor of Science',    required: true,  type: 'text'  },
-  { id: 'fieldOfStudy',   label: 'Field of Study',      placeholder: 'e.g. Computer Science',              required: true,  type: 'text'  },
-  { id: 'issueDate',      label: 'Issue Date',          placeholder: '',                                   required: true,  type: 'date'  },
-  { id: 'description',    label: 'Additional Notes',    placeholder: 'Graduated with honors…',             required: false, type: 'text'  },
+
+const CERT_FIELDS = [
+  { id: 'studentName',       label: 'Student Name',               placeholder: 'e.g. Jane Smith',                  required: true,  type: 'text'     },
+  { id: 'studentEmail',      label: 'Student Email',              placeholder: 'e.g. jane@university.edu',         required: true,  type: 'email'    },
+  { id: 'studentId',         label: 'Student ID',                 placeholder: 'e.g. STU-2024-78901',              required: true,  type: 'text'     },
+  { id: 'dateOfBirth',       label: 'Date of Birth',              placeholder: '',                                 required: true,  type: 'date'     },
+  { id: 'degreeTitle',       label: 'Degree / Certificate Title', placeholder: 'e.g. Bachelor of Science',        required: true,  type: 'text'     },
+  { id: 'degreeLevel',       label: 'Degree Level',               placeholder: '',                                 required: true,  type: 'select',  options: ['Certificate', 'Diploma', 'Associate', 'Bachelor', 'Master', 'Doctorate', 'Postdoctoral'] },
+  { id: 'fieldOfStudy',      label: 'Field of Study',             placeholder: 'e.g. Computer Science',            required: true,  type: 'text'     },
+  { id: 'enrollmentDate',    label: 'Enrollment Date',            placeholder: '',                                 required: true,  type: 'date'     },
+  { id: 'graduationDate',    label: 'Graduation Date',            placeholder: '',                                 required: true,  type: 'date'     },
+  { id: 'issueDate',         label: 'Certificate Issue Date',     placeholder: '',                                 required: true,  type: 'date'     },
+  { id: 'gpa',               label: 'GPA / CGPA',                 placeholder: 'e.g. 3.85',                        required: false, type: 'text'     },
+  { id: 'honors',            label: 'Honors / Distinction',       placeholder: 'e.g. Summa Cum Laude',             required: false, type: 'text'     },
+  { id: 'certificateNumber', label: 'Certificate Number',         placeholder: 'e.g. CERT-2024-00123',             required: true,  type: 'text'     },
 ];
 
-/* ─────────────────────────────────────────────────────────────
-   Main Component
-   ───────────────────────────────────────────────────────────── */
+// main component
 
 export default function AdminPortal() {
-  const [wallet, setWallet]           = useState(null);
-  const [walletLoading, setWalletLoading] = useState(false);
-  const [walletError, setWalletError] = useState('');
+  
+  const universityName = localStorage.getItem('credence_uni_name') || 'University';
 
   const [form, setForm] = useState({
-    studentName: '', studentEmail: '', universityName: '',
-    degreeTitle: '', fieldOfStudy: '',
+    studentName: '', studentEmail: '', studentId: '', dateOfBirth: '',
+    degreeTitle: '', degreeLevel: 'Bachelor', fieldOfStudy: '',
+    enrollmentDate: '', graduationDate: '',
     issueDate: new Date().toISOString().split('T')[0],
-    description: '',
+    gpa: '', honors: '', certificateNumber: '',
   });
 
-  const [issuing, setIssuing]   = useState(false);
-  const [formError, setFormError] = useState('');
-  const [result, setResult]     = useState(null);
+// pantom wallet states
+  const [wallet, setWallet]               = useState(null);
+  const [walletLoading, setWalletLoading] = useState(false);
+  const [walletError, setWalletError]     = useState('');
 
-  /* ── Phantom Wallet ── */
-  const connectPhantom = useCallback(async () => {
+// pinata upload states
+  const [certFile, setCertFile]                   = useState(null);
+  const [certFileCid, setCertFileCid]             = useState('');
+  const [uploadingCertFile, setUploadingCertFile] = useState(false);
+  const [uploadError, setUploadError]             = useState('');
+  const certFileInputRef = useRef(null);
+
+  const [issuing, setIssuing]     = useState(false);
+  const [formError, setFormError] = useState('');
+  const [result, setResult]       = useState(null);
+
+  /// Phantom Wallet Connection 
+  const connectWallet = useCallback(async () => {
     setWalletError('');
     setWalletLoading(true);
     try {
-      if (!window.solana || !window.solana.isPhantom) {
-        throw new Error(
-          'Phantom wallet not found. Please install the Phantom extension and refresh.'
-        );
+      if (!window.solana?.isPhantom) {
+        throw new Error('Phantom wallet not installed. Please install from https://phantom.app');
       }
-      const resp = await window.solana.connect();
-      setWallet(resp.publicKey.toString());
+      
+      const response = await window.solana.connect();
+      const walletAddress = response.publicKey.toBase58();
+      setWallet(walletAddress);
+      console.log(' Connected to Phantom:', walletAddress);
     } catch (err) {
-      setWalletError(err.message || 'Failed to connect Phantom wallet.');
+      setWalletError(err.message || 'Failed to connect wallet');
+      console.error('Wallet connection error:', err);
     } finally {
       setWalletLoading(false);
     }
@@ -72,12 +92,56 @@ export default function AdminPortal() {
 
   const disconnectWallet = useCallback(async () => {
     try {
-      if (window.solana && window.solana.disconnect) await window.solana.disconnect();
+      if (window.solana?.disconnect) {
+        await window.solana.disconnect();
+      }
+      setWallet(null);
+      setResult(null);
+      setWalletError('');
+      console.log(' Disconnected from Phantom');
     } catch (err) {
-      console.warn('Wallet disconnect error:', err);
+      console.error('Wallet disconnect error:', err);
     }
-    setWallet(null);
-    setResult(null);
+  }, []);
+
+  /* ── File Upload to Pinata IPFS ──
+   * Uses real Pinata API via ipfsService
+   * Requires REACT_APP_PINATA_API_KEY and REACT_APP_PINATA_API_SECRET in .env
+   */
+  const uploadFileToPinata = useCallback(async (file) => {
+    if (!file) throw new Error('No file selected');
+    try {
+      const cid = await uploadToPinata(file, file.name);
+      return cid;
+    } catch (err) {
+      throw new Error(`Failed to upload to IPFS: ${err.message}`);
+    }
+  }, []);
+
+  const handleCertFileChange = useCallback(async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setCertFile(file);
+    setUploadingCertFile(true);
+    setUploadError('');
+    try {
+      const cid = await uploadFileToPinata(file);
+      setCertFileCid(cid);
+      console.log(' Certificate uploaded to IPFS:', cid);
+    } catch (err) {
+      const errorMsg = err.message || 'Unknown upload error';
+      console.error(' File upload failed:', err);
+      setUploadError(errorMsg);
+      setCertFile(null);
+    } finally {
+      setUploadingCertFile(false);
+    }
+  }, [uploadFileToPinata]);
+
+  const removeCertFile = useCallback(() => {
+    setCertFile(null);
+    setCertFileCid('');
+    setUploadError('');
   }, []);
 
   /* ── Form Handlers ── */
@@ -92,126 +156,128 @@ export default function AdminPortal() {
       return;
     }
 
-    for (const f of FIELDS) {
+    // Validate that institution name contains "University" or "College"
+    const lowerUniName = universityName.toLowerCase();
+    if (!lowerUniName.includes('university') && !lowerUniName.includes('college')) {
+      setFormError('Institution name must contain "University" or "College". Please update your registration.');
+      return;
+    }
+
+    for (const f of CERT_FIELDS) {
       if (f.required && !form[f.id]?.trim()) {
         setFormError(`Please fill in "${f.label}".`);
         return;
       }
     }
 
+    if (!certFileCid) {
+      setFormError('Please upload a certificate PDF document.');
+      return;
+    }
+
     setIssuing(true);
     try {
-      /* Cryptographically secure random nonce */
-      const nonceBytes = new Uint8Array(16);
-      window.crypto.getRandomValues(nonceBytes);
-      const nonce = Array.from(nonceBytes)
-        .map((b) => b.toString(16).padStart(2, '0'))
-        .join('');
-
-      /* Generate deterministic certificate hash */
+      // Generate certificate hash
       const payload = JSON.stringify({
         ...form,
+        universityName,
         issuedAt: new Date().toISOString(),
-        issuerWallet: wallet,
-        blockchain: 'solana-devnet',
-        nonce,
+        certificateDocCid: certFileCid || null,
       });
       const hash = await sha256(payload);
 
-      /* Simulate Solana devnet tx signature using secure random bytes */
-      const txBytes = new Uint8Array(32);
-      window.crypto.getRandomValues(txBytes);
-      const txSignature = Array.from(txBytes)
-        .map((b) => b.toString(16).padStart(2, '0'))
-        .join('');
+      // Issue certificate on Anchor/Solana
+      console.log('⛓ Creating certificate on-chain via Anchor...');
+      const chainResult = await createCertificateViaAnchor(
+        {
+          universityName,
+          studentName: form.studentName,
+          studentId: form.studentId,
+          dateOfBirth: form.dateOfBirth,
+          ipfsCid: certFileCid || '',
+        },
+        wallet
+      );
 
-      /* Generate QR code pointing to verify page */
+      // Generate QR code for verification
       const verifyUrl = `${window.location.origin}${window.location.pathname}#verify/${hash}`;
       const qrDataUrl = await QRCode.toDataURL(verifyUrl, {
-        width: 280,
-        margin: 2,
+        width: 280, margin: 2,
         color: { dark: '#0b1c3d', light: '#ffffff' },
       });
 
       const cert = {
         hash,
-        txSignature,
         qrCode: qrDataUrl,
         issuedAt: new Date().toISOString(),
-        issuerWallet: wallet,
-        blockchain: 'solana-devnet',
+        universityName,
+        certificateDocCid: certFileCid || null,
+        anchorTxSignature: chainResult.txSignature,
+        certificatePda: chainResult.certificatePda,
+        blockchainStatus: 'confirmed',
         ...form,
       };
 
       storeCertificate(cert);
       setResult(cert);
 
-      /* Reset form */
       setForm({
-        studentName: '', studentEmail: '', universityName: '',
-        degreeTitle: '', fieldOfStudy: '',
+        studentName: '', studentEmail: '', studentId: '', dateOfBirth: '',
+        degreeTitle: '', degreeLevel: 'Bachelor', fieldOfStudy: '',
+        enrollmentDate: '', graduationDate: '',
         issueDate: new Date().toISOString().split('T')[0],
-        description: '',
+        gpa: '', honors: '', certificateNumber: '',
       });
+      setCertFile(null);
+      setCertFileCid('');
     } catch (err) {
-      setFormError('Failed to issue certificate: ' + err.message);
+      setFormError('Failed to create certificate: ' + err.message);
     } finally {
       setIssuing(false);
     }
-  }, [wallet, form]);
+  }, [wallet, form, universityName, certFileCid]);
 
-  /* ── Download QR ── */
-  const downloadQR = useCallback(() => {
-    if (!result?.qrCode) return;
-    const a = document.createElement('a');
-    a.href = result.qrCode;
-    a.download = `credence-qr-${result.hash.slice(0, 12)}.png`;
-    a.click();
-  }, [result]);
-
-  /* ── Copy hash ── */
-  const [copied, setCopied] = useState(false);
-  const copyHash = useCallback(() => {
-    if (!result?.hash) return;
-    navigator.clipboard.writeText(result.hash);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  }, [result]);
-
-  /* ── Build mailto link ── */
+  /* ── Build mailto ── */
   const buildMailto = (cert) => {
     const subject = encodeURIComponent(`Your Certificate from ${cert.universityName}`);
     const verifyUrl = `${window.location.origin}${window.location.pathname}#verify/${cert.hash}`;
     const body = encodeURIComponent(
-      `Dear ${cert.studentName},\n\nCongratulations! Your academic certificate has been issued on the Solana Devnet blockchain.\n\nCertificate Hash:\n${cert.hash}\n\nVerify Online:\n${verifyUrl}\n\nIssued by: ${cert.universityName}\nDegree: ${cert.degreeTitle} — ${cert.fieldOfStudy}\nIssue Date: ${cert.issueDate}\n\nThis certificate is permanently recorded on the blockchain and cannot be altered.\n\nBest regards,\n${cert.universityName}`
+      `Dear ${cert.studentName},\n\nCongratulations! Your academic certificate has been issued.\n\nCertificate Hash:\n${cert.hash}\n\nVerify Online:\n${verifyUrl}\n\nIssued by: ${cert.universityName}\nDegree: ${cert.degreeTitle} (${cert.degreeLevel}) — ${cert.fieldOfStudy}\nIssue Date: ${cert.issueDate}\n\nBest regards,\n${cert.universityName}`
     );
     return `mailto:${cert.studentEmail}?subject=${subject}&body=${body}`;
   };
 
-  /* ─────────────────────────────────────────────
+  /* ── Handle email click ── */
+  const handleEmailClick = useCallback(() => {
+    if (!result) return;
+    const mailtoLink = buildMailto(result);
+    window.open(mailtoLink);
+  }, [result]);
+
+  /* ─────────────────────────────────────────────────────────────
      Render
-     ───────────────────────────────────────────── */
+     ───────────────────────────────────────────────────────────── */
   return (
     <div className="univ-portal">
 
-      {/* ── Page Header ── */}
+      {/* Header */}
       <div className="univ-header">
         <div className="univ-header-inner">
           <div className="univ-header-icon">🎓</div>
           <div>
-            <h1>University Dashboard</h1>
-            <p>Issue blockchain-verified certificates on Solana Devnet</p>
+            <h1>{universityName}</h1>
+            <p>Issue Solana blockchain certificates via Anchor</p>
           </div>
         </div>
       </div>
 
       <div className="univ-content">
 
-        {/* ── Wallet Card ── */}
+        {/* Wallet Connection Card */}
         <div className="univ-card wallet-card">
           <div className="card-label">
-            <span className="label-dot solana-dot" />
-            Solana Devnet · Phantom Wallet
+            <span className="label-dot anchor-dot" />
+            Anchor Wallet · Phantom
           </div>
 
           {wallet ? (
@@ -228,27 +294,19 @@ export default function AdminPortal() {
           ) : (
             <div className="wallet-disconnected-row">
               <p className="wallet-hint-text">
-                Connect your Phantom wallet to issue certificates on Solana Devnet.
+                Connect your Phantom wallet to issue certificates on Solana via Anchor.
               </p>
-              <button
-                className="btn-phantom"
-                onClick={connectPhantom}
-                disabled={walletLoading}
-              >
-                {walletLoading ? (
-                  <><span className="spinner" /> Connecting…</>
-                ) : (
-                  <><span className="phantom-icon">👻</span> Connect Phantom</>
-                )}
+              <button className="btn-phantom" onClick={connectWallet} disabled={walletLoading}>
+                {walletLoading
+                  ? <><span className="spinner" /> Connecting…</>
+                  : <><span className="phantom-icon"></span> Connect Phantom</>}
               </button>
-              {walletError && (
-                <p className="error-inline">{walletError}</p>
-              )}
+              {walletError && <p className="error-inline">{walletError}</p>}
             </div>
           )}
         </div>
 
-        {/* ── Issue Form ── */}
+        {/* Issue Form */}
         <div className="univ-card form-card">
           <h2 className="card-section-title">
             <span className="section-accent" />
@@ -257,7 +315,7 @@ export default function AdminPortal() {
 
           <form onSubmit={handleSubmit} className="univ-form">
             <div className="form-grid">
-              {FIELDS.map((f) => (
+              {CERT_FIELDS.map((f) => (
                 <div
                   key={f.id}
                   className={`form-group${f.id === 'description' ? ' full-width' : ''}`}
@@ -266,123 +324,98 @@ export default function AdminPortal() {
                     {f.label}
                     {f.required && <span className="required-star"> *</span>}
                   </label>
-                  <input
-                    id={f.id}
-                    type={f.type}
-                    value={form[f.id]}
-                    onChange={(e) => handleChange(f.id, e.target.value)}
-                    placeholder={f.placeholder}
-                    required={f.required}
-                    autoComplete="off"
-                  />
+                  {f.type === 'select' ? (
+                    <select
+                      id={f.id}
+                      value={form[f.id]}
+                      onChange={(e) => handleChange(f.id, e.target.value)}
+                      required={f.required}
+                    >
+                      {f.options.map((opt) => (
+                        <option key={opt} value={opt}>{opt}</option>
+                      ))}
+                    </select>
+                  ) : f.type === 'textarea' ? (
+                    <textarea
+                      id={f.id}
+                      value={form[f.id]}
+                      onChange={(e) => handleChange(f.id, e.target.value)}
+                      placeholder={f.placeholder}
+                      required={f.required}
+                      rows={3}
+                    />
+                  ) : (
+                    <input
+                      id={f.id}
+                      type={f.type}
+                      value={form[f.id]}
+                      onChange={(e) => handleChange(f.id, e.target.value)}
+                      placeholder={f.placeholder}
+                      required={f.required}
+                      autoComplete="off"
+                    />
+                  )}
                 </div>
               ))}
             </div>
 
-            {formError && (
-              <div className="form-error">{formError}</div>
-            )}
+            {/* Certificate Document Upload (Pinata IPFS) */}
+            <div className="file-upload-section">
+              <h3 className="upload-section-title"> Certificate Document (Pinata IPFS)</h3>
+              <div className="file-upload-group">
+                <label>
+                  Certificate PDF <span className="required-star"> *</span>
+                </label>
+                <div className="file-upload-area">
+                  {certFile ? (
+                    <div className="file-preview">
+                      <span className="file-name">{certFile.name}</span>
+                      {uploadingCertFile
+                        ? <span className="uploading-badge"><span className="spinner" /> Uploading to IPFS…</span>
+                        : certFileCid
+                          ? <span className="cid-badge">✓ CID: {certFileCid.slice(0, 16)}…</span>
+                          : null}
+                      <button type="button" className="btn-remove-file" onClick={removeCertFile}>✕</button>
+                    </div>
+                  ) : (
+                    <div className="file-drop-zone" onClick={() => certFileInputRef.current?.click()}>
+                      <span className="upload-icon"></span>
+                      <span>Click to upload certificate document</span>
+                      <span className="file-hint">PDF (Max 10MB) · Will be stored on IPFS</span>
+                    </div>
+                  )}
+                  <input
+                    ref={certFileInputRef}
+                    type="file"
+                    accept=".pdf"
+                    onChange={handleCertFileChange}
+                    hidden
+                  />
+                </div>
+                {uploadError && <p className="error-inline"> Upload failed: {uploadError}</p>}
+              </div>
+            </div>
+
+            {formError && <div className="form-error">{formError}</div>}
 
             <button
               type="submit"
               className={`btn-issue${!wallet ? ' btn-disabled' : ''}`}
               disabled={issuing || !wallet}
             >
-              {issuing ? (
-                <><span className="spinner" /> Issuing on Solana…</>
-              ) : (
-                '⛓ Issue Certificate on Solana Devnet'
-              )}
+              {issuing
+                ? <><span className="spinner" /> Issuing on Anchor…</>
+                : '⛓ Issue Certificate on Anchor'}
             </button>
 
             {!wallet && (
-              <p className="form-wallet-reminder">
-                Connect your Phantom wallet above to enable issuance.
-              </p>
+              <p className="form-wallet-reminder">Connect your Phantom wallet above to enable issuance.</p>
             )}
           </form>
         </div>
 
-        {/* ── Result Card ── */}
-        {result && (
-          <div className="univ-card result-card">
-            <div className="result-banner">
-              <span className="result-check">✅</span>
-              <div>
-                <h2>Certificate Issued Successfully!</h2>
-                <p>Recorded on Solana Devnet · Transaction confirmed</p>
-              </div>
-            </div>
-
-            <div className="result-body">
-              {/* Details */}
-              <div className="result-details">
-                <h3 className="result-section-heading">Certificate Information</h3>
-                {[
-                  ['Student Name',   result.studentName],
-                  ['Student Email',  result.studentEmail],
-                  ['University',     result.universityName],
-                  ['Degree',         result.degreeTitle],
-                  ['Field of Study', result.fieldOfStudy],
-                  ['Issue Date',     result.issueDate],
-                  ['Issued At',      new Date(result.issuedAt).toLocaleString()],
-                  ['Blockchain',     'Solana Devnet'],
-                  ['Issuer Wallet',  result.issuerWallet],
-                ].map(([label, value]) => (
-                  <div className="result-row" key={label}>
-                    <span className="result-label">{label}</span>
-                    <span className="result-value">{value}</span>
-                  </div>
-                ))}
-
-                <div className="result-row hash-row">
-                  <span className="result-label">Certificate Hash</span>
-                  <div className="hash-chip">
-                    <span className="hash-text">{result.hash}</span>
-                    <button className="btn-copy" onClick={copyHash}>
-                      {copied ? '✓ Copied' : '⎘ Copy'}
-                    </button>
-                  </div>
-                </div>
-
-                <div className="result-row">
-                  <span className="result-label">Tx Signature</span>
-                  <span className="result-value mono tx-sig">{result.txSignature}</span>
-                </div>
-              </div>
-
-              {/* QR Code */}
-              <div className="result-qr">
-                <h3 className="result-section-heading">QR Code</h3>
-                <div className="qr-frame">
-                  <img src={result.qrCode} alt="Certificate QR Code" />
-                </div>
-                <p className="qr-caption">Scan to verify this certificate</p>
-                <button className="btn-download-qr" onClick={downloadQR}>
-                  ⬇ Download QR
-                </button>
-              </div>
-            </div>
-
-            {/* Email Action */}
-            <div className="email-section">
-              <h3 className="result-section-heading">📧 Send to Student</h3>
-              <p className="email-description">
-                Click the button below to open your email client with a pre-composed
-                email containing the certificate hash and QR code link for{' '}
-                <strong>{result.studentEmail}</strong>.
-              </p>
-              <a
-                href={buildMailto(result)}
-                className="btn-email"
-                target="_blank"
-                rel="noreferrer"
-              >
-                ✉ Send Certificate Email
-              </a>
-            </div>
-          </div>
-        )}
+        {/* Result: Certificate Issued */}
+        {result && <Certificate cert={result} onEmailClick={handleEmailClick} />}
       </div>
     </div>
   );

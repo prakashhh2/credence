@@ -20,7 +20,7 @@ function Navbar({ onHome }) {
   };
 
   const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
+    setIsMenuOpen((prev) => !prev);
   };
 
   const navItems = [
@@ -31,7 +31,7 @@ function Navbar({ onHome }) {
   ];
 
   return (
-    <nav className="navbar">
+    <nav className={`navbar${isMenuOpen ? ' menu-open' : ''}`}>
       {/* Left section: Brand */}
       <div className="nav-brand" onClick={handleLogoClick}>
         <img
@@ -55,7 +55,7 @@ function Navbar({ onHome }) {
         ))}
       </div>
 
-      {/* Right section: CTA Button */}
+      {/* Right section: CTA + Mobile Toggle */}
       <div className="nav-right">
         <button
           className="nav-cta"
@@ -63,16 +63,17 @@ function Navbar({ onHome }) {
         >
           Get Started
         </button>
-        
-        {/* Mobile Menu Toggle */}
+
+        {/* Hamburger */}
         <button
-          className="nav-toggle"
+          className={`nav-toggle${isMenuOpen ? ' is-open' : ''}`}
           onClick={toggleMenu}
           aria-label="Toggle menu"
+          aria-expanded={isMenuOpen}
         >
-          <span className="hamburger"></span>
-          <span className="hamburger"></span>
-          <span className="hamburger"></span>
+          <span className="hamburger" />
+          <span className="hamburger" />
+          <span className="hamburger" />
         </button>
       </div>
     </nav>

@@ -1,0 +1,121 @@
+{
+  "address": "7HMYW9c9Hb3SoMfME4hucUDrKi5iWwpD4QeSGeLDUfAf",
+  "metadata": {
+    "name": "credence_cert",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Created with Anchor"
+  },
+  "instructions": [
+    {
+      "name": "create_certificate",
+      "docs": [
+        "Create a certificate and store it on Solana"
+      ],
+      "discriminator": [
+        238,
+        189,
+        143,
+        29,
+        100,
+        80,
+        70,
+        10
+      ],
+      "accounts": [
+        {
+          "name": "certificate",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "university_name",
+          "type": "string"
+        },
+        {
+          "name": "student_name",
+          "type": "string"
+        },
+        {
+          "name": "student_id",
+          "type": "string"
+        },
+        {
+          "name": "date_of_birth",
+          "type": "string"
+        },
+        {
+          "name": "ipfs_cid",
+          "type": "string"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "Certificate",
+      "discriminator": [
+        202,
+        229,
+        222,
+        220,
+        116,
+        20,
+        74,
+        67
+      ]
+    }
+  ],
+  "types": [
+    {
+      "name": "Certificate",
+      "docs": [
+        "Certificate account data structure"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "university_name",
+            "type": "string"
+          },
+          {
+            "name": "student_name",
+            "type": "string"
+          },
+          {
+            "name": "student_id",
+            "type": "string"
+          },
+          {
+            "name": "date_of_birth",
+            "type": "string"
+          },
+          {
+            "name": "ipfs_cid",
+            "type": "string"
+          },
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "created_at",
+            "type": "i64"
+          }
+        ]
+      }
+    }
+  ]
+}
