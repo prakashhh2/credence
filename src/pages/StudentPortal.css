@@ -1,0 +1,449 @@
+/**
+ * Student Portal — Credence
+ * Matches home page design system (no premium tools)
+ */
+
+/* ════════════════════════════════════════════════════════
+   Page Layout
+   ════════════════════════════════════════════════════════ */
+
+.student-portal-v2 {
+  min-height: calc(100vh - 64px);
+  background: radial-gradient(circle at 20% 0%, rgba(30, 136, 229, 0.07) 0%, transparent 50%),
+              #f8fafc;
+  padding-bottom: 4rem;
+}
+
+/* ════════════════════════════════════════════════════════
+   Header
+   ════════════════════════════════════════════════════════ */
+
+.sp-header {
+  background: linear-gradient(135deg, #1e88e5 0%, #0b1c3d 100%);
+  color: white;
+  padding: 3rem 2rem;
+  text-align: center;
+  box-shadow: 0 4px 24px rgba(11, 28, 61, 0.2);
+}
+
+.sp-header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.sp-header-icon {
+  font-size: 3rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.sp-header h1 {
+  margin: 0 0 0.4rem 0;
+  font-size: clamp(1.8rem, 3.5vw, 2.4rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: #fff;
+}
+
+.sp-header p {
+  margin: 0;
+  font-size: 1rem;
+  opacity: 0.85;
+}
+
+/* ════════════════════════════════════════════════════════
+   Content
+   ════════════════════════════════════════════════════════ */
+
+.sp-content {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* ════════════════════════════════════════════════════════
+   Cards
+   ════════════════════════════════════════════════════════ */
+
+.sp-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 4px 16px rgba(30, 136, 229, 0.06);
+}
+
+.sp-card-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #0b1c3d;
+  margin: 0 0 0.75rem 0;
+}
+
+.section-accent-sp {
+  display: inline-block;
+  width: 4px;
+  height: 24px;
+  background: linear-gradient(180deg, #1e88e5, #0b1c3d);
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.sp-card-desc {
+  color: #64748b;
+  font-size: 0.93rem;
+  line-height: 1.65;
+  margin: 0 0 1.5rem 0;
+}
+
+/* ════════════════════════════════════════════════════════
+   Search Form
+   ════════════════════════════════════════════════════════ */
+
+.sp-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.sp-input-row {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.sp-hash-input {
+  flex: 1;
+  min-width: 220px;
+  padding: 0.75rem 1rem;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 0.93rem;
+  font-family: 'Courier New', monospace;
+  color: #0f172a;
+  background: #f8fafc;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.sp-hash-input:focus {
+  border-color: #1e88e5;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(30, 136, 229, 0.12);
+}
+
+.sp-hash-input::placeholder {
+  color: #94a3b8;
+  font-family: inherit;
+}
+
+.btn-view-cert {
+  padding: 0.75rem 1.6rem;
+  background: linear-gradient(135deg, #1e88e5, #0b1c3d);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  white-space: nowrap;
+  box-shadow: 0 4px 14px rgba(30, 136, 229, 0.3);
+}
+
+.btn-view-cert:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(30, 136, 229, 0.4);
+}
+
+.sp-error {
+  background: #fee2e2;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+  border-radius: 10px;
+  padding: 0.8rem 1.1rem;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+}
+
+/* ════════════════════════════════════════════════════════
+   Certificate Display
+   ════════════════════════════════════════════════════════ */
+
+.cert-display-card {
+  border-color: #bbf7d0;
+  background: #f0fdf4;
+}
+
+.cert-verified-banner {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding-bottom: 1.75rem;
+  border-bottom: 1px solid #bbf7d0;
+  margin-bottom: 1.75rem;
+}
+
+.cv-icon {
+  font-size: 2.5rem;
+  flex-shrink: 0;
+}
+
+.cert-verified-banner h2 {
+  margin: 0 0 0.25rem 0;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #14532d;
+}
+
+.cert-verified-banner p {
+  margin: 0;
+  font-size: 0.88rem;
+  color: #16a34a;
+  font-weight: 500;
+}
+
+.cert-display-body {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 2.5rem;
+  align-items: start;
+}
+
+.cert-detail-heading {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #0b1c3d;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin: 0 0 1rem 0;
+}
+
+.cert-detail-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid #d1fae5;
+}
+
+.cert-detail-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  min-width: 130px;
+  flex-shrink: 0;
+}
+
+.cert-detail-value {
+  font-size: 0.95rem;
+  color: #0f172a;
+}
+
+.hash-detail-row {
+  align-items: flex-start;
+}
+
+.cert-hash-block {
+  background: #f0f5fb;
+  border: 1px solid #d4e4f7;
+  border-radius: 8px;
+  padding: 0.6rem 0.9rem;
+  flex: 1;
+}
+
+.cert-hash-text {
+  font-family: 'Courier New', monospace;
+  font-size: 0.75rem;
+  color: #0b1c3d;
+  word-break: break-all;
+}
+
+/* Actions Column */
+.cert-actions-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  min-width: 180px;
+}
+
+.cert-qr-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.cert-qr-frame {
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 0.65rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.cert-qr-frame img {
+  display: block;
+  width: 180px;
+  height: 180px;
+  border-radius: 6px;
+}
+
+.qr-scan-hint {
+  font-size: 0.78rem;
+  color: #64748b;
+  text-align: center;
+  margin: 0;
+}
+
+.cert-download-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.btn-download-cert {
+  width: 100%;
+  padding: 0.75rem 1.25rem;
+  background: linear-gradient(135deg, #1e88e5, #0b1c3d);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 14px rgba(30, 136, 229, 0.3);
+}
+
+.btn-download-cert:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(30, 136, 229, 0.4);
+}
+
+.btn-download-qr-sp {
+  width: 100%;
+  padding: 0.65rem 1rem;
+  background: transparent;
+  border: 1.5px solid #1e88e5;
+  color: #1e88e5;
+  border-radius: 10px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-download-qr-sp:hover {
+  background: #1e88e5;
+  color: white;
+}
+
+/* ════════════════════════════════════════════════════════
+   Info Cards (empty state)
+   ════════════════════════════════════════════════════════ */
+
+.sp-info-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+}
+
+.sp-info-card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 1.75rem;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.sp-info-card:hover {
+  border-color: #1e88e5;
+  box-shadow: 0 6px 20px rgba(30, 136, 229, 0.12);
+  transform: translateY(-3px);
+}
+
+.sp-info-icon {
+  font-size: 2rem;
+  margin-bottom: 0.75rem;
+}
+
+.sp-info-card h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0b1c3d;
+  margin: 0 0 0.5rem 0;
+}
+
+.sp-info-card p {
+  font-size: 0.88rem;
+  color: #64748b;
+  line-height: 1.65;
+  margin: 0;
+}
+
+/* ════════════════════════════════════════════════════════
+   Responsive
+   ════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+  .sp-header {
+    padding: 2rem 1.25rem;
+  }
+
+  .sp-header-inner {
+    flex-direction: column;
+    gap: 0.75rem;
+    text-align: center;
+  }
+
+  .sp-content {
+    padding: 1.5rem 1rem 0;
+    gap: 1.5rem;
+  }
+
+  .sp-card {
+    padding: 1.5rem;
+  }
+
+  .sp-input-row {
+    flex-direction: column;
+  }
+
+  .btn-view-cert {
+    width: 100%;
+  }
+
+  .cert-display-body {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .cert-actions-col {
+    order: -1;
+    min-width: unset;
+    width: 100%;
+  }
+
+  .cert-qr-frame img {
+    width: 160px;
+    height: 160px;
+  }
+}

@@ -1,0 +1,341 @@
+{
+  "address": "CWQmifkEM6m8JfMxcc6xCgVhUGtRPEypWA2tATev2KHM",
+  "metadata": {
+    "name": "anchor_program",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Created with Anchor"
+  },
+  "instructions": [
+    {
+      "name": "issue_certificate",
+      "docs": [
+        "Issue a new certificate on-chain.",
+        "Creates a PDA keyed by [b\"certificate\", certificate_hash]."
+      ],
+      "discriminator": [
+        61,
+        197,
+        55,
+        28,
+        159,
+        18,
+        132,
+        128
+      ],
+      "accounts": [
+        {
+          "name": "certificate",
+          "docs": [
+            "The certificate PDA — created here, keyed by the certificate hash."
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  101,
+                  114,
+                  116,
+                  105,
+                  102,
+                  105,
+                  99,
+                  97,
+                  116,
+                  101
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "certificate_hash"
+              }
+            ]
+          }
+        },
+        {
+          "name": "issuer",
+          "docs": [
+            "The university admin wallet that pays for the account and signs the TX."
+          ],
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "certificate_hash",
+          "type": "string"
+        },
+        {
+          "name": "student_name",
+          "type": "string"
+        },
+        {
+          "name": "date_of_birth",
+          "type": "string"
+        },
+        {
+          "name": "university_name",
+          "type": "string"
+        },
+        {
+          "name": "passout_year",
+          "type": "u32"
+        },
+        {
+          "name": "field_of_study",
+          "type": "string"
+        },
+        {
+          "name": "gpa",
+          "type": "string"
+        },
+        {
+          "name": "degree_title",
+          "type": "string"
+        },
+        {
+          "name": "student_id",
+          "type": "string"
+        },
+        {
+          "name": "issue_date",
+          "type": "string"
+        },
+        {
+          "name": "ipfs_cid",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "revoke_certificate",
+      "docs": [
+        "Revoke an existing certificate.",
+        "Only the original issuer can call this."
+      ],
+      "discriminator": [
+        236,
+        5,
+        130,
+        119,
+        9,
+        164,
+        130,
+        122
+      ],
+      "accounts": [
+        {
+          "name": "certificate",
+          "docs": [
+            "The certificate PDA to revoke."
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  101,
+                  114,
+                  116,
+                  105,
+                  102,
+                  105,
+                  99,
+                  97,
+                  116,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "certificate.certificate_hash",
+                "account": "CertificateAccount"
+              }
+            ]
+          }
+        },
+        {
+          "name": "issuer",
+          "docs": [
+            "Must be the original issuer."
+          ],
+          "signer": true,
+          "relations": [
+            "certificate"
+          ]
+        }
+      ],
+      "args": []
+    }
+  ],
+  "accounts": [
+    {
+      "name": "CertificateAccount",
+      "discriminator": [
+        9,
+        141,
+        26,
+        14,
+        246,
+        14,
+        202,
+        133
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "InvalidHashLength",
+      "msg": "Certificate hash must be exactly 64 characters (SHA-256 hex)."
+    },
+    {
+      "code": 6001,
+      "name": "UnauthorizedRevocation",
+      "msg": "Only the original issuer can revoke this certificate."
+    },
+    {
+      "code": 6002,
+      "name": "AlreadyRevoked",
+      "msg": "Certificate is already revoked."
+    },
+    {
+      "code": 6003,
+      "name": "EmptyStudentName",
+      "msg": "Student name cannot be empty."
+    },
+    {
+      "code": 6004,
+      "name": "EmptyUniversityName",
+      "msg": "University name cannot be empty."
+    },
+    {
+      "code": 6005,
+      "name": "InvalidPassoutYear",
+      "msg": "Passout year is invalid."
+    }
+  ],
+  "types": [
+    {
+      "name": "CertificateAccount",
+      "docs": [
+        "On-chain certificate account stored at a PDA derived from the certificate hash.",
+        "",
+        "PDA seeds: [b\"certificate\", certificate_hash.as_bytes()]"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "certificate_hash",
+            "docs": [
+              "SHA-256 hex digest of the certificate payload (64 hex chars)"
+            ],
+            "type": "string"
+          },
+          {
+            "name": "student_name",
+            "docs": [
+              "Full name of the student"
+            ],
+            "type": "string"
+          },
+          {
+            "name": "date_of_birth",
+            "docs": [
+              "Student date of birth (YYYY-MM-DD)"
+            ],
+            "type": "string"
+          },
+          {
+            "name": "university_name",
+            "docs": [
+              "Issuing university / institution name"
+            ],
+            "type": "string"
+          },
+          {
+            "name": "passout_year",
+            "docs": [
+              "Year the student passed out / graduated"
+            ],
+            "type": "u32"
+          },
+          {
+            "name": "field_of_study",
+            "docs": [
+              "Field / major of study"
+            ],
+            "type": "string"
+          },
+          {
+            "name": "gpa",
+            "docs": [
+              "GPA or CGPA string (e.g. \"3.85\")"
+            ],
+            "type": "string"
+          },
+          {
+            "name": "degree_title",
+            "docs": [
+              "Full degree or certificate title"
+            ],
+            "type": "string"
+          },
+          {
+            "name": "student_id",
+            "docs": [
+              "Student ID issued by the university"
+            ],
+            "type": "string"
+          },
+          {
+            "name": "issue_date",
+            "docs": [
+              "Certificate issue date (YYYY-MM-DD)"
+            ],
+            "type": "string"
+          },
+          {
+            "name": "ipfs_cid",
+            "docs": [
+              "Pinata / IPFS CID of the certificate document"
+            ],
+            "type": "string"
+          },
+          {
+            "name": "issuer",
+            "docs": [
+              "Wallet of the university admin that issued the certificate"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "issued_at",
+            "docs": [
+              "Unix timestamp (seconds) of when the cert was recorded on-chain"
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "revoked",
+            "docs": [
+              "Revocation flag — once true the certificate is considered invalid"
+            ],
+            "type": "bool"
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,459 @@
+/**
+ * Verify Certificate — Credence
+ * Matches home page design system (no premium tools)
+ */
+
+/* ════════════════════════════════════════════════════════
+   Page Layout
+   ════════════════════════════════════════════════════════ */
+
+.vp-page {
+  min-height: calc(100vh - 64px);
+  background: radial-gradient(circle at 70% 0%, rgba(30, 136, 229, 0.07) 0%, transparent 50%),
+              #f8fafc;
+  padding-bottom: 4rem;
+}
+
+/* ════════════════════════════════════════════════════════
+   Header
+   ════════════════════════════════════════════════════════ */
+
+.vp-header {
+  background: linear-gradient(135deg, #1e88e5 0%, #0b1c3d 100%);
+  color: white;
+  padding: 3rem 2rem;
+  text-align: center;
+  box-shadow: 0 4px 24px rgba(11, 28, 61, 0.2);
+}
+
+.vp-header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.vp-header-icon {
+  font-size: 3rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.vp-header h1 {
+  margin: 0 0 0.4rem 0;
+  font-size: clamp(1.8rem, 3.5vw, 2.4rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: #fff;
+}
+
+.vp-header p {
+  margin: 0;
+  font-size: 1rem;
+  opacity: 0.85;
+}
+
+/* ════════════════════════════════════════════════════════
+   Content
+   ════════════════════════════════════════════════════════ */
+
+.vp-content {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* ════════════════════════════════════════════════════════
+   Cards
+   ════════════════════════════════════════════════════════ */
+
+.vp-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 4px 16px rgba(30, 136, 229, 0.06);
+}
+
+/* ════════════════════════════════════════════════════════
+   Search Card
+   ════════════════════════════════════════════════════════ */
+
+.vp-card-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #0b1c3d;
+  margin: 0 0 0.75rem 0;
+}
+
+.vp-section-accent {
+  display: inline-block;
+  width: 4px;
+  height: 24px;
+  background: linear-gradient(180deg, #1e88e5, #0b1c3d);
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.vp-card-desc {
+  color: #64748b;
+  font-size: 0.93rem;
+  line-height: 1.65;
+  margin: 0 0 1.5rem 0;
+}
+
+.vp-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.vp-input-row {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.vp-hash-input {
+  flex: 1;
+  min-width: 220px;
+  padding: 0.75rem 1rem;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-family: 'Courier New', monospace;
+  color: #0f172a;
+  background: #f8fafc;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.vp-hash-input:focus {
+  border-color: #1e88e5;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(30, 136, 229, 0.12);
+}
+
+.vp-hash-input::placeholder {
+  color: #94a3b8;
+  font-family: inherit;
+}
+
+.btn-verify {
+  padding: 0.75rem 1.75rem;
+  background: linear-gradient(135deg, #1e88e5, #0b1c3d);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  white-space: nowrap;
+  box-shadow: 0 4px 14px rgba(30, 136, 229, 0.3);
+}
+
+.btn-verify:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(30, 136, 229, 0.4);
+}
+
+.vp-error {
+  background: #fee2e2;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+  border-radius: 10px;
+  padding: 0.8rem 1.1rem;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+}
+
+/* ════════════════════════════════════════════════════════
+   Result — Verified
+   ════════════════════════════════════════════════════════ */
+
+.result-card-verified {
+  border-color: #bbf7d0;
+  background: #f0fdf4;
+}
+
+.result-card-invalid {
+  border-color: #fecaca;
+  background: #fff5f5;
+}
+
+.vp-result-banner {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding-bottom: 1.75rem;
+  border-bottom: 1px solid #e2e8f0;
+  margin-bottom: 1.75rem;
+  flex-wrap: wrap;
+}
+
+.verified-banner {
+  border-bottom-color: #bbf7d0;
+}
+
+.invalid-banner {
+  border-bottom-color: #fecaca;
+}
+
+.result-status-icon {
+  font-size: 2.8rem;
+  flex-shrink: 0;
+}
+
+.vp-result-banner h2 {
+  margin: 0 0 0.25rem 0;
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.verified-banner h2 { color: #14532d; }
+.invalid-banner h2  { color: #7f1d1d; }
+
+.vp-result-banner p {
+  margin: 0;
+  font-size: 0.88rem;
+  font-weight: 500;
+}
+
+.verified-banner p { color: #16a34a; }
+.invalid-banner p  { color: #dc2626; }
+
+.vp-blockchain-badge {
+  margin-left: auto;
+  background: linear-gradient(135deg, #9945ff, #14f195);
+  color: white;
+  border-radius: 999px;
+  padding: 0.35rem 1rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Certificate grid */
+.vp-cert-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 0;
+  margin-bottom: 1.5rem;
+}
+
+.vp-cert-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem;
+  padding: 0.65rem 0;
+  border-bottom: 1px solid #d1fae5;
+}
+
+.vp-cert-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  min-width: 130px;
+  flex-shrink: 0;
+}
+
+.vp-cert-value {
+  font-size: 0.95rem;
+  color: #0f172a;
+  word-break: break-all;
+}
+
+/* Hash */
+.vp-hash-section {
+  background: #f0f5fb;
+  border: 1px solid #d4e4f7;
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.vp-hash-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #64748b;
+  margin-bottom: 0.5rem;
+}
+
+.vp-hash-value {
+  font-family: 'Courier New', monospace;
+  font-size: 0.78rem;
+  color: #0b1c3d;
+  word-break: break-all;
+  line-height: 1.5;
+}
+
+/* QR */
+.vp-qr-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.vp-qr-frame {
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 0.65rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.vp-qr-frame img {
+  display: block;
+  width: 180px;
+  height: 180px;
+  border-radius: 6px;
+}
+
+.vp-qr-caption {
+  font-size: 0.78rem;
+  color: #64748b;
+  text-align: center;
+  margin: 0;
+}
+
+/* Invalid hints */
+.vp-invalid-hints {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.vp-invalid-hints li {
+  color: #64748b;
+  font-size: 0.92rem;
+  padding: 0.5rem 0 0.5rem 1.5rem;
+  position: relative;
+  line-height: 1.55;
+}
+
+.vp-invalid-hints li::before {
+  content: "→";
+  position: absolute;
+  left: 0;
+  color: #ef4444;
+  font-weight: bold;
+}
+
+/* ════════════════════════════════════════════════════════
+   How-it-works (idle state)
+   ════════════════════════════════════════════════════════ */
+
+.vp-how-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+}
+
+.vp-how-card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 1.75rem;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.vp-how-card:hover {
+  border-color: #1e88e5;
+  box-shadow: 0 6px 20px rgba(30, 136, 229, 0.12);
+  transform: translateY(-3px);
+}
+
+.vp-step-circle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  background: linear-gradient(135deg, #1e88e5, #0b1c3d);
+  color: white;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.vp-how-card h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #0b1c3d;
+  margin: 0 0 0.5rem 0;
+}
+
+.vp-how-card p {
+  font-size: 0.88rem;
+  color: #64748b;
+  line-height: 1.65;
+  margin: 0;
+}
+
+/* ════════════════════════════════════════════════════════
+   Responsive
+   ════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+  .vp-header {
+    padding: 2rem 1.25rem;
+  }
+
+  .vp-header-inner {
+    flex-direction: column;
+    gap: 0.75rem;
+    text-align: center;
+  }
+
+  .vp-content {
+    padding: 1.5rem 1rem 0;
+    gap: 1.5rem;
+  }
+
+  .vp-card {
+    padding: 1.5rem;
+  }
+
+  .vp-input-row {
+    flex-direction: column;
+  }
+
+  .btn-verify {
+    width: 100%;
+  }
+
+  .vp-cert-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .vp-blockchain-badge {
+    margin-left: 0;
+  }
+
+  .vp-qr-frame img {
+    width: 160px;
+    height: 160px;
+  }
+}
