@@ -48,6 +48,18 @@ async function getProgram() {
   return new Program(idl, provider);
 }
 
+// Read-only program — no wallet required. Used for public verification.
+async function getReadonlyProgram() {
+  const idl = await loadIDL();
+  const connection = new Connection(RPC_URL, 'confirmed');
+  const provider = new AnchorProvider(connection, {
+    publicKey: PublicKey.default,
+    signTransaction: async (tx) => tx,
+    signAllTransactions: async (txs) => txs,
+  }, { preflightCommitment: 'confirmed' });
+  return new Program(idl, provider);
+}
+
 
 function getCertificatePda(certificateHash) {
   const [pda] = PublicKey.findProgramAddressSync(
@@ -145,7 +157,7 @@ export async function fetchCertificateByHash(hash) {
   if (!hash || hash.trim().length === 0) return null;
 
   try {
-    const program = await getProgram();
+    const program = await getReadonlyProgram();
     const pda = getCertificatePda(hash.trim());
 
     console.log('🔍 Fetching certificate from chain. PDA:', pda.toBase58());
