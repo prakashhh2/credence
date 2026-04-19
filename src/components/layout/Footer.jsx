@@ -2,10 +2,13 @@ import { useEffect, useState } from "react";
 import "./Footer.css";
 
 const Footer = () => {
-  const [theme, setTheme] = useState("dark");
+  const [theme, setTheme] = useState(
+    () => localStorage.getItem("theme") || "dark"
+  );
 
   useEffect(() => {
     document.body.setAttribute("data-theme", theme);
+    localStorage.setItem("theme", theme);
   }, [theme]);
 
   const toggleTheme = () => {
@@ -79,7 +82,7 @@ const Footer = () => {
         <div className="footer-section">
           <h3>Appearance</h3>
           <button className="theme-btn" onClick={toggleTheme}>
-            {theme === "dark" ? "Dark Mode" : " Light Mode"}
+            {theme === "dark" ? "Switch to Light" : "Switch to Dark"}
           </button>
         </div>
 
